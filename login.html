@@ -1,0 +1,82 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Into the account</title>
+</head>
+<body>
+    <div class="container">
+        <div class="slopebox"></div>
+        <div class="slopebox2"></div>
+        <!-- lOGIN  -->
+        <div class="login-form">
+            <h2 class="animation" style="--D:1">LOGIN</h2>
+            <form action="" method="POST" onsubmit="loginValidation()">
+                <div class="input-layer animation" style="--D:2">
+                    <input type="text" name="username" id="username" required>
+                    <label for="username">USERNAME </label>
+                    <i class="fa-regular fa-user"></i>
+                    
+                </div>
+                <div class="input-layer animation" style="--D:3">
+                    <input type="password" name="password" id="password" required>
+                    <label for="password">PASSWORD</label>
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <div class="input-layer animation" style="--D:4">
+                    <input type="submit" value="LOGIN" class="login">
+                </div>
+                <div class="forgot animation" style="--D:5">
+                    <button class="forgotlink">Forgot password?</button>
+                </div>
+            </form>
+        </div>
+        <div class="information login">
+            <H2 class="animation" style="--D:0">WELCOME<br> BACK!</H2>
+            <div class="changeslide signup animation" style="--D:1">
+                <label class="animation" style="--D:2">New to our platform? </label>
+                <a class="signuplink animation" style="--D:3">Create your account</a>
+            </div>
+        </div>
+
+       <!-- FORGOT -->
+       <div class="forgot-form">
+        <h2 class="animation" class="--D:1">FORGOT PASSWORD</h2>
+        <form action="">
+            <div class="input-layer animation" class="--D:2">
+                <input type="text" name="forgot-email" id="forgot-email" required>
+                <label for="forgot-email">EMAIL </label>
+            
+            </div>
+            <div class="input-layer animation" class="--D:3">
+                <input type="text" class="forgot-dob" name="forgot-dob" id="forgot-dob" required> 
+                <label class="forgot-dob-l" for="forgot-dob">DOB </label>  
+            </div>
+            <div class="input-layer animation" class="--D:4">
+                <input type="password" name="forgot-password" id="forgot-password" required>
+                <label for="login-password">NEW PASSWORD</label>
+            </div>
+            <div class="input-layer animation" class="--D:5">
+                <input type="password" name="forgot-cpassword" id="forgot-cpassword" required>
+                <label for="login-cpassword">CONFIRM PASSWORD</label>
+            </div>
+    
+            <div class="input-layer animation" class="--D:6">
+                <input type="submit" value="RESET PASSWORD">
+            </div>
+        </form>
+    </div>
+    <div class="information forgot animation">
+        <H2 class="animation">WELCOME<br> BACK!</H2>
+        <div class="changeslide forgot animation" >
+            <i class="fa-solid fa-arrow-left"></i>
+            <button class="loginlink">BACK TO LOGIN</button>
+        </div>
+    </div>
+    </div>   
+    <script src="login.js"></script>
+
+</body>
+</html>
