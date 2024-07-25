@@ -15,8 +15,6 @@ if (!$conn) {
 }
 echo "Connected successfully";
 
-// Close connection
-mysqli_close($conn);
 ?>
 
 </body>
