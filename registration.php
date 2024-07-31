@@ -64,7 +64,25 @@
                     <tr>
                         <td><label for="phonenum">MOBILE NUMBER</label></td>
                         <td><input type="text" name="phonenum" id="phonenum"></td>
-                    </tr>           
+                    </tr> 
+                 </div>
+                <div>
+                    <tr>
+                        <td><label for="department">DEPARTMENT</label"></td>
+                        <td><input type="text" name="department" id ="department"></td>
+                    </tr>
+                </div>
+                <div>
+                    <tr>
+                        <td><label for="college">COLLEGE</label></td>
+                        <td><input type="text" name="college" id="college"></td>
+                    </tr>
+                </div>
+                <div>
+                    <tr>
+                        <td><label for="year">YEAR-OF-PASSING</label></td>
+                        <td><input type="number" id="year" name="year" min="2000" max="2026"></td>
+                    </tr>
                 </div>
                 <div class="inputlayer">
                     <tr>
