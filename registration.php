@@ -81,7 +81,7 @@
                 <div>
                     <tr>
                         <td><label for="year">YEAR-OF-PASSING</label></td>
-                        <td><input type="number" id="year" name="year" min="2000" max="2026"></td>
+                        <td><input type="number" id="year" name="year" min="2000"></td>
                     </tr>
                 </div>
                 <div class="inputlayer">

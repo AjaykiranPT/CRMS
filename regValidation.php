@@ -45,17 +45,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("ssssssi", $fname,$lname,$email,$phonenum,$department,$college,$year);
     // Execute the statement
     if ($stmt->execute()) {
-        echo "New record created successfully";
+        echo "<script>alert('New record created successfully');</script>";
     } else {
-        echo "Error: " . $stmt->error;
+        echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }
-        
-    } else {
-        // Display the errors
-        foreach ($errors as $error) {
-            echo "<p>$error</p>";
-        }
+    
+} else {
+    // Display the errors
+    foreach ($errors as $error) {
+        echo "<script>alert('$error');</script>";
     }
+}
     // Close connections
     $stmt->close();
     $conn->close();
