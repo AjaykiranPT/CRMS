@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("ssssssi", $fname,$lname,$email,$phonenum,$department,$college,$year);
     // Execute the statement
     if ($stmt->execute()) {
-        echo "<script>alert('New record created successfully');</script>";
+        echo "<script>alert('New User created successfully');</script>";
     } else {
         echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }

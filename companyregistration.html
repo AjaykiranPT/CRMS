@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <script>
+            function validateForm() {
+                // Get form elements
+                var companyName = document.getElementById("companyname").value;
+                var regId = document.getElementById("regid").value;
+                var contactPerson = document.getElementById("contactperson").value;
+                var email = document.getElementById("email").value;
+                var phoneNum = document.getElementById("phonenum").value;
+    
+                // Regular expressions for validation
+                var regIdPattern = /^[A-Za-z0-9]{6,}$/;
+                var phoneNumPattern = /^[0-9]{10}$/;
+    
+                // Validate Company Name
+                if (companyName === "") {
+                    alert("Company Name is required.");
+                    return false;
+                }
+    
+                // Validate Registration ID
+                if (!regIdPattern.test(regId)) {
+                    alert("Registration ID should be alphanumeric and at least 6 characters long.");
+                    return false;
+                }
+    
+                // Validate Contact Person
+                if (contactPerson === "") {
+                    alert("Contact Person is required.");
+                    return false;
+                }
+    
+                // Validate Email
+                var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    alert("Please enter a valid email address.");
+                    return false;
+                }
+    
+                // Validate Phone Number
+                if (!phoneNumPattern.test(phoneNum)) {
+                    alert("Phone number should be 10 digits long.");
+                    return false;
+                }
+    
+                // If all validations pass
+                return true;
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container">
+           <h2>Fill the Correctly</h2> 
+        </div>
+        <form action="companyvalidation.php" method="post" onsubmit="return validateForm()">
+            <table>
+                <div>
+                    <tr>
+                        <td><label for="CompanyName">Company Name</label></td>
+                        <td><input type="text" id="companyname" name="companyname"></td>
+                    </tr>
+                </div>
+                <div>
+                <tr>
+                    <td><label for="regid">Registration ID</label></td>
+                    <td><input type="number" id="regid" name="regid"></td>
+                </tr>
+                </div>
+                <div>
+                    <tr>
+                        <td><label for="contactperson">Contact Person</label></td>
+                        <td><input type="text" id="contactperson" name="contactperson"></td>
+                    </tr>
+                </div>
+                <div>
+                    <tr>
+                        <td><label for="Email">Email</label></td>
+                        <td><input type="email" id="email" name="email"></td>
+                    </tr>
+                </div>
+                <div>
+                    <tr>
+                        <td><label for="phonenum">Phone Number</label></td>
+                        <td><input type="text" id="phonenum" name="phonenum" ></td>
+                    </tr>
+                </div>
+                <div>
+                    <tr>
+                        <td></td>
+                        <td><input type="submit" value="Submit"></td>
+                    </tr>
+                </div>
+            </table>
+        </form>
+    </body>
+</html>
