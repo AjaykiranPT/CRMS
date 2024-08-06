@@ -13,14 +13,15 @@
     }
     body {
         display: flex;
-        justify-content: start;
+        justify-content: center;
         align-items: center;
         min-height: 100vh;
         color: #000000;
-        background-image: url("\img\bg1.png");
+        background-image: url('img/background-registration.jpg');
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
+        height: 100%;
     }
     h2 {
         font-size: 25px;
@@ -29,18 +30,29 @@
         color: #2f5fff;
     }
     .container{
-        background-color: #000000;
+        background-color: #00000093;
         width: 50%;
-        min-width: 400px;
-        height: 100%;
-        padding: 20px;
+        min-width: 500px;
+        height: 80%;
+        padding-inline: 10%;
+        padding-block: 20px;
         margin: 0;
-        box-shadow: 10px 0px 10px #0059ff;
+        overflow: auto;
         
-
+        box-shadow: 10px 0px 20px #000000;
+        backdrop-filter: blur(10px); /* Blur value */
+  -webkit-backdrop-filter: blur(10px); /* For Safari */
+    }
+    .container::-webkit-scrollbar{
+        display: none;
+    }
+        
+    .container .form{
+        width:60%;
     }
     .input-layer {
-        margin-bottom: 36px;
+        margin-bottom: 45px;
+        height: 50px;
         position: relative;
     }
     .input-layer input {
@@ -48,19 +60,20 @@
         width: 100%;
         border: none;
         outline: none;
-        border-bottom: 2px solid #202020;
+        border-bottom: 1px solid #c0c0c0;;
         font-size: 16px;
         padding: 5px 0;
         background: none;
-        color: #a5a5a5;
+        color: #ffffff;
     } 
     .input-layer label {
         position: absolute;
-        top: 50%;
+        top: 20%;
         left: 0px;
         transform: translateY(-50%);
-        color: #575757;
-        font-size: 16px;
+        color: #c0c0c0;
+        font-size: 22px;
+        font-weight: 1;
         pointer-events: none;
         transition: all 0.3s ease;
     }
@@ -68,7 +81,7 @@
     .input-layer input:not(:placeholder-shown) ~ label {
         top: -20px;
         left: 0;
-        color: rgb(47, 95, 255);
+        color: #0059ff;
     }
     .input-layer input:focus{
         border-bottom: #0059ff 2px solid;
@@ -78,16 +91,16 @@
         position: absolute;
         color: rgb(47, 95, 255);
         width: 100%;
-        height: 30px;
+        height: 40px;
         border: 1px solid rgb(47, 95, 255);
         background-color: black;
         font-weight: 600;
         border-radius: 5px;
     }
     .input-layer input[type=submit]:hover {
-        box-shadow: 0px -5px 8px #0059ff inset;
+
         color: white;
-        border: rgb(0, 0, 0);
+        border-color: #ffffff;
     }
     </style>
 </head>
