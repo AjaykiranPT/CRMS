@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = trim($_POST['email']);
     $phonenum = trim($_POST['phonenum']);
     $regid = trim($_POST['regid']);
+    $password= trim($_POST['password']);
     
     //include Connection
     include 'connection.php';
@@ -36,8 +37,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($errors)) {
          // Inserting data into Table
         // Prepare and bind
-    $stmt = $conn->prepare("INSERT INTO Company (RegID,CompanyName,ContactPerson,Email,Phone) VALUES (?,?,?,?,?)");
-    $stmt->bind_param("sssss", $regid,$companyname,$contactperson,$email,$phonenum);
+    $hashed_password = password_hash($password, PASSWORD_BCRYPT);   
+    $stmt = $conn->prepare("INSERT INTO Company (RegID,CompanyName,ContactPerson,Email,Phone,password) VALUES (?,?,?,?,?,?)");
+    $stmt->bind_param("ssssss", $regid,$companyname,$contactperson,$email,$phonenum,$hashed_password);
     // Execute the statement
     if ($stmt->execute()) {
         echo "<script>alert('New Company created successfully');</script>";

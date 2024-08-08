@@ -468,21 +468,7 @@
         </div>
     </section>
 
-    <footer>
-        <div class="container">
-            <ul>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Sitemap</a></li>
-            </ul>
-            <form class="newsletter">
-                <input type="email" placeholder="Subscribe to our newsletter" required>
-                <button type="submit">Subscribe</button>
-            </form>
-        </div>
-    </footer>
-
-    <script>
+        <script>
         // Toggle Menu for Mobile View
         const menuToggle = document.querySelector('.menu-toggle');
         const nav = document.querySelector('nav ul');

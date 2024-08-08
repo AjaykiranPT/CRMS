@@ -204,7 +204,7 @@
     </div>
 
        <div class="companyform" id="companyform">
-            <form action="companyvalidation.php" method="post" onsubmit="return validateForm()">
+            <form //action="companyvalidation.php" method="post" onsubmit="return validateForm()">
                 <div class="input-layer">
                     <input type="text" id="companyname" name="companyname" placeholder=" ">
                     <label for="companyname">Company Name</label>
@@ -225,6 +225,10 @@
                     <input type="text" id="phonenum" name="phonenum" placeholder=" ">
                     <label for="phonenum">Phone Number</label>
                 </div>
+                <div class="input-layer">
+                    <input type="password" id="password" name="password" placeholder=" ">
+                    <label for="password">Password</label>
+                </div>
                     <div class="input-layer">
                     <input type="submit" value="Submit">
                 </div>
@@ -232,7 +236,7 @@
         </div>
 
         <div class="userform" id="userform" style="display: none;">
-             <form action="companyvalidation.php" method="post" onsubmit="return validateForm()">
+             <form action="regValidation.php" method="post" onsubmit="return validateUserForm()">
                 <div class="input-layer">
                     <div class="fname">
                         <input type="text" id="userfname" name="userfname" placeholder=" ">
@@ -245,7 +249,7 @@
                     </div>
                  
                 <div class="input-layer">
-                    <select>
+                    <select name="gender">
                         <option value="" selected disabled>SELECT GENDER </option>
                         <option value="">MALE</option>
                         <option value="">FEMALE</option>
@@ -269,15 +273,15 @@
                     <label for="yearpassing">Year of passing</label>
                 </div>
                 <div class="input-layer">
-                    <input type="text" id="phonenum" name="phonenum" placeholder=" ">
+                    <input type="text" id="userphonenum" name="userphonenum" placeholder=" ">
                     <label for="phonenum">Phone Number</label>
                 </div>
                 <div class="input-layer">
-                    <input type="email" id="email" name="email" placeholder=" ">
+                    <input type="email" id="useremail" name="useremail" placeholder=" ">
                     <label for="email">Email</label>
                 </div>
                  <div class="input-layer">
-                     <input type="password" id="password" name="password" placeholder=" ">
+                     <input type="password" id="userpassword" name="userpassword" placeholder=" ">
                      <label for="password">Password</label>
                  </div>
                  
@@ -301,7 +305,8 @@
             var contactPerson = document.getElementById("contactperson").value;
             var email = document.getElementById("email").value;
             var phoneNum = document.getElementById("phonenum").value;
-
+            var password = document.getElementById("password").value;
+            
             // Regular expressions for validation
             var regIdPattern = /^[A-Za-z0-9]{6,}$/;
             var phoneNumPattern = /^[0-9]{10}$/;
@@ -336,10 +341,79 @@
                 alert("Phone number should be 10 digits long.");
                 return false;
             }
-
+            var passwordpattern = /^(?=.*[A-Z])(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+            if (!passwordpattern.test(password)) {
+                alert("Password must be at least 8 characters long, including at least one special character and one uppercase letter.");
+                 return false;
+            }
             // If all validations pass
             return true;
         }
+    function validateUserForm(){
+        //Get form Elements
+        var fname= document.getElementById("userfname").value;
+        var lname = document.getElementById("userlname").value;
+        var useremail = document.getElementById("useremail").value;
+        var Phone =document.getElementById('userphonenum').value;
+        var course =document.getElementById('course').value;
+        var college =document.getElementById('college').value;
+        var Year =document.getElementById('yearpassing').value;
+        var gender=document.getElementById('gender').value;
+        var City =document.getElementById('usercity').value;
+        var userpassword =document.getElementById('userpassword').value;
+        var cpassword = document.getElementById('cpassword').value;
+        //validate Name
+        if (fname === "") {
+                alert("First Name is required.");
+                return false;
+            }
+        if (lname === "") {
+                alert("Last Name is required.");
+                return false;
+            }
+        if (gender === "") {
+                alert("Gender is required.");
+                return false;
+            }
+        if (City === "") {
+                alert("City Name is required.");
+                return false;
+            }
+         if (college === "") {
+                alert("College Name is required.");
+                return false;
+            }
+         if (course === "") {
+                alert("Course Name is required.");
+                return false;
+            }
+        if (Year === "") {
+                alert("Year of Passing is required.");
+                return false;
+            }
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(useremail)) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+            // Validate Phone Number
+            var phoneNumPattern = /^[0-9]{10}$/;
+            if (!phoneNumPattern.test(Phone)) {
+                alert("Phone number should be 10 digits long.");
+                return false;
+            }
+            var passwordpattern = /^(?=.*[A-Z])(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+            if (!passwordpattern.test(userpassword)) {
+                alert("Password must be at least 8 characters long, including at least one special character and one uppercase letter.");
+                 return false;
+                 }
+            if(password != cpassword){
+                alert("Two passwords must be Same");
+                return false;
+            }
+             // If all validations pass
+            return true;
+       }
         const toggleCheckbox = document.getElementById('checkbox-toggle');
         const userContainer = document.getElementById('userform');
         const registrationContainer = document.getElementById('companyform');

@@ -1,13 +1,17 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the user input
-    $fname = trim($_POST['fname']);
-    $lname = trim($_POST['lname']);
-    $email = trim($_POST['mail']);
-    $phonenum = trim($_POST['phonenum']);
-    $department = trim($_POST['department']);
+    $fname = trim($_POST['userfname']);
+    $lname = trim($_POST['userlname']);
+    $email = trim($_POST['useremail']);
+    $phonenum = trim($_POST['userphonenum']);
+    $course = trim($_POST['course']);
     $college = trim($_POST['college']);
-    $year = trim($_POST['year']);
+    $year = trim($_POST['yearpassing']);
+    $gender= trim($_POST['gender']);
+    $city = trim($_POST['usercity']);
+    $password= trim($_POST['userpassword']);
+
     
     //include Connection
     include 'connection.php';
@@ -36,19 +40,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!preg_match('/^[0-9]{10}$/', $phonenum)) {
         $errors[] = "Phone number must be 10 digits";
     }
+    
 
     // If there are no errors, proceed with processing the form
     if (empty($errors)) {
+        $hashed_password = password_hash($password, PASSWORD_BCRYPT); 
         // Inserting data into Table
         // Prepare and bind
-    $stmt = $conn->prepare("INSERT INTO Students (FirstName,LastName,Email,Phone,Department,College,YearOfPassing) VALUES (?,?,?,?,?,?,?)");
-    $stmt->bind_param("ssssssi", $fname,$lname,$email,$phonenum,$department,$college,$year);
+    $stmt = $conn->prepare("INSERT INTO Students (FirstName,LastName,Email,Phone,Gender,Course,College,YearOfPassing,City,Password) VALUES (?,?,?,?,?,?,?,?,?,?)");
+    $stmt->bind_param("sssssssiss", $fname,$lname,$email,$phonenum,$gender,$course,$college,$year,$city,$hashed_password);
     // Execute the statement
     if ($stmt->execute()) {
         echo "<script>alert('New User created successfully');</script>";
     } else {
         echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }
+    
     
 } else {
     // Display the errors
