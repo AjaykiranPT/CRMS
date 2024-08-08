@@ -49,9 +49,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Prepare and bind
     $stmt = $conn->prepare("INSERT INTO Students (FirstName,LastName,Email,Phone,Gender,Course,College,YearOfPassing,City,Password) VALUES (?,?,?,?,?,?,?,?,?,?)");
     $stmt->bind_param("sssssssiss", $fname,$lname,$email,$phonenum,$gender,$course,$college,$year,$city,$hashed_password);
+    $inst=$conn->prepare("INSERT INTO login (username,password) VALUES(?,?)");
+    $inst->bind_param("ss",$email,$hashed_password);
     // Execute the statement
     if ($stmt->execute()) {
         echo "<script>alert('New User created successfully');</script>";
+        $inst->execute();
     } else {
         echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }
@@ -65,6 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
     // Close connections
     $stmt->close();
+    $inst->close();
     $conn->close();
 }
 ?>

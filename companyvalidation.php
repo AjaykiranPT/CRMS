@@ -40,9 +40,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hashed_password = password_hash($password, PASSWORD_BCRYPT);   
     $stmt = $conn->prepare("INSERT INTO Company (RegID,CompanyName,ContactPerson,Email,Phone,password) VALUES (?,?,?,?,?,?)");
     $stmt->bind_param("ssssss", $regid,$companyname,$contactperson,$email,$phonenum,$hashed_password);
+    $inst=$conn->prepare("INSERT INTO login (username,password) VALUES(?,?)");
+    $inst->bind_param("ss",$email,$hashed_password);
     // Execute the statement
     if ($stmt->execute()) {
         echo "<script>alert('New Company created successfully');</script>";
+        $inst->execute();
     } else {
         echo "<script>alert('Error: " . $stmt->error . "');</script>";
     }
@@ -52,6 +55,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             echo $error ;
         }
     }
+    $stmt->close();
+    $inst->close();
+    $conn->close();
 }
 
 ?>
