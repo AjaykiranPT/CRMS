@@ -17,10 +17,11 @@
         align-items: center;
         min-height: 100vh;
         color: #000000;
-        background-image: url('img/background-registration.jpg');
-        background-position: center;
+        /* background-image: url('img/background-registration.jpg'); */
+        background-color: #000000;
+        /*background-position: center;
         background-repeat: no-repeat;
-        background-size: cover;
+        background-size: cover; */
         height: 100%;
     }
     h2 {
@@ -30,7 +31,7 @@
         color: #2f5fff;
     }
     .container{
-        background-color: #00000093;
+        background-image: linear-gradient(50deg, rgb(19, 19, 19),#000000);
         width: 50%;
         min-width: 500px;
         height: 80%;
@@ -38,8 +39,9 @@
         padding-block: 20px;
         margin: 0;
         overflow: auto;
-        
-        box-shadow: 10px 0px 20px #000000;
+        border: 1px solid rgb(47, 95, 255);
+        box-shadow:rgba(47, 95, 255, 0.507) 0px 0px 20px;
+        border-radius: 10px 10px;
         backdrop-filter: blur(10px); /* Blur value */
   -webkit-backdrop-filter: blur(10px); /* For Safari */
     }
@@ -72,10 +74,11 @@
         left: 0px;
         transform: translateY(-50%);
         color: #c0c0c0;
-        font-size: 22px;
-        font-weight: 1;
+        font-size: 17px;
         pointer-events: none;
+        font-weight: 100;
         transition: all 0.3s ease;
+        letter-spacing: .5px;
     }
     .input-layer input:focus ~ label,
     .input-layer input:not(:placeholder-shown) ~ label {
@@ -145,6 +148,8 @@
         height: 40px;
         width: 300px;
         background-color: #0059ff;
+        box-shadow: 0px 7px 10px rgb(0, 0, 0) inset;
+        border: 1px solid white;
         overflow: hidden;
         border-radius: 20px;
 
@@ -155,13 +160,14 @@
     .checkbox .toggle{
         width: 150px;
         height: 40px;
-        background-color: #f3f3f3;
+        background-color: #ffffffb2;
         position: absolute;
         border-radius: 20px;
         left: 0;
         cursor: pointer;
-        transition-duration: .2s;
+        transition:all .3s ease-in-out;
     }
+    
     .checkbox .slide{
         width: 300px;
         height: 40px;
@@ -179,7 +185,7 @@
 
     }
     .check:checked + .checkbox .slide .toggle{
-        transform: translateX(150px);
+        transform: translateX(148px);
     }
     </style>
 </head>
@@ -225,20 +231,20 @@
             </form>
         </div>
 
-        <div class="userform" id="userform">
+        <div class="userform" id="userform" style="display: none;">
              <form action="companyvalidation.php" method="post" onsubmit="return validateForm()">
-                 <div class="input-layer">
+                <div class="input-layer">
                     <div class="fname">
                         <input type="text" id="userfname" name="userfname" placeholder=" ">
                         <label for="userfname">First name</label>
                     </div>
                     <div class="sname">
-                        <input type="text" id="usersname" name="usersname" placeholder=" ">
-                        <label for="usersname">Second Name</label>
+                        <input type="text" id="userlname" name="userlname" placeholder=" ">
+                        <label for="userlname">Last Name</label>
                     </div>
-                 </div>
+                    </div>
                  
-                 <div class="input-layer">
+                <div class="input-layer">
                     <select>
                         <option value="" selected disabled>SELECT GENDER </option>
                         <option value="">MALE</option>
@@ -249,6 +255,18 @@
                 <div class="input-layer">
                     <input type="text" id="usercity" name="usercity" placeholder=" ">
                     <label for="usercity">City</label>
+                </div>
+                <div class="input-layer">
+                    <input type="text" id="course" name="course" placeholder=" ">
+                    <label for="course">Course</label>
+                </div>
+                <div class="input-layer">
+                    <input type="text" id="college" name="college" placeholder=" ">
+                    <label for="college">College</label>
+                </div>
+                <div class="input-layer">
+                    <input type="num" id="yearpassing" name="yearpassing" placeholder=" ">
+                    <label for="yearpassing">Year of passing</label>
                 </div>
                 <div class="input-layer">
                     <input type="text" id="phonenum" name="phonenum" placeholder=" ">
