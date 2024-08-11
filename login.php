@@ -1,3 +1,4 @@
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -279,7 +280,24 @@
         transition-delay: calc(.2s * var(--D));
         z-index: 2;
     
-    }</style>
+    }
+    .errordiv{
+        height: 40px;
+        align-items:center;
+        display:flex;
+        position: relative;
+    }
+    .errordiv p{
+        color:red;
+        position: absolute;
+        top:20px
+    }
+    .errordiv .pos{
+        color:green;
+        position: absolute;
+        top:20px
+    }
+</style>
 </head>
 <body>
     <div class="container">
@@ -288,18 +306,35 @@
         <!-- lOGIN  -->
         <div class="login-form">
             <h2 class="animation" style="--D:1">LOGIN</h2>
+            
             <form action="loginvalidation.php" method="POST" onsubmit="loginValidation()">
                 <div class="input-layer animation" style="--D:2">
-                    <input type="text" name="username" id="username" required>
-                    <label for="username">USERNAME </label>
+                    <input type="text" name="login_email" id="login_email" required>
+                    <label for="login_email">EMAIL </label>
                     <i class="fa-regular fa-user"></i>
                     
                 </div>
                 <div class="input-layer animation" style="--D:3">
-                    <input type="password" name="password" id="password" required>
-                    <label for="password">PASSWORD</label>
+                    <input type="password" name="login_password" id="login_password" required>
+                    <label for="login_password">PASSWORD</label>
                     <i class="fa-solid fa-lock"></i>
                 </div>
+                <div class="errordiv">
+                
+                    <?php
+                        if(isset($_GET['error'])){
+                            $error_message=htmlspecialchars($_GET['error']);
+                            echo "<p>{$error_message}</p>";
+                            unset($_GET['error']);
+                       } 
+                       if(isset($_GET['message'])){
+                        echo "<p class='pos'>{$_GET['message']}</p>";
+                        unset($_GET['message']);
+                   } 
+                    ?>
+
+                </label>
+            </div>
                 <div class="input-layer animation" style="--D:4">
                     <input type="submit" value="LOGIN" class="login">
                 </div>
@@ -312,7 +347,7 @@
             <H2 class="animation" style="--D:0">WELCOME<br> BACK!</H2>
             <div class="changeslide signup animation" style="--D:1">
                 <label class="animation" style="--D:2">New to our platform? </label>
-                <a class="signuplink animation" style="--D:3" href="registration.html">Create your account</a>
+                <a class="signuplink animation" style="--D:3" href="registration.php">Create your account</a>
             </div>
         </div>
 
@@ -354,16 +389,18 @@
     <script>const container=document.querySelector('.container');
         const forgotlink=document.querySelector('.forgotlink');
         const loginlink=document.querySelector('.loginlink');
+        const error=document.querySelector('.errordiv');
         //const login=document.querySelector('.login');
         forgotlink.addEventListener('click',()=>{
             container.classList.add('active');
+            error.style.display = 'none';
         })
         loginlink.addEventListener('click',()=>{
             container.classList.remove('active');
         })
         
          function loginValidation(){
-                alert("USERNAME AND PASSWORD NOT NULL");
+         //       alert("USERNAME AND PASSWORD NOT NULL");
         //     // const username=document.getElementById('username');
         //     // const password=document.getElementById('password');
         //     // if(username.value==''|| password.value=='' ){

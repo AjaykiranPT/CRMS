@@ -394,7 +394,7 @@
             <h1>Connecting Students with Their Dream Jobs</h1>
             <p>Efficient, streamlined campus recruitment solutions for students and recruiters.</p>
             <a href="#contact" class="btn">Get Started</a>
-            <a href="login.html" class="btn login-btn">Login</a>
+            <a href="login.php" class="btn login-btn">Login</a>
         </div>
     </section>
 
