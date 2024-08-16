@@ -42,8 +42,6 @@
         border: 1px solid rgb(47, 95, 255);
         box-shadow:rgba(47, 95, 255, 0.507) 0px 0px 20px;
         border-radius: 10px 10px;
-        backdrop-filter: blur(10px); /* Blur value */
-  -webkit-backdrop-filter: blur(10px); /* For Safari */
     }
     .container::-webkit-scrollbar{
         display: none;
@@ -202,8 +200,9 @@
 </head>
 <body>
     <div class="container">
-    
        <h2>Fill the Form Correctly</h2>
+
+      <!-- TOGGLE  -->
     <div class="selection">
         <input type="checkbox" id="checkbox-toggle" class="check">
         <div class="checkbox">
@@ -215,6 +214,7 @@
         </div>
     </div>
 
+    <!-- COMPANY FORM -->
        <div class="companyform" id="companyform">
             <form action="companyvalidation.php" method="post" onsubmit="return company_validateForm()">
                 
@@ -236,12 +236,12 @@
                     <label for="companyphonenum">Phone Number</label>
                 </div>
                 <div class="input-layer">
-                    <input type="password" id="password" name="password" placeholder=" ">
-                    <label for="password">Password</label>
+                    <input type="password" id="companypassword" name="companypassword" placeholder=" ">
+                    <label for="companypassword">Password</label>
                 </div>
                 <div class="input-layer">
-                    <input type="password" id="cpassword" name="cpassword" placeholder=" ">
-                    <label for="cpassword">Confirm password</label>
+                    <input type="password" id="companyrepassword" name="companyrepassword" placeholder=" ">
+                    <label for="companyrepassword">Confirm password</label>
                 </div>
                 <div class="input-layer">
                     <input type="submit" value="Submit">
@@ -249,7 +249,8 @@
             </form>
         </div>
 
-        <div class="studentform" id="studentform" style="display: none;">
+        <!-- STUDENT FORM  -->
+        <div class="studentform" id="studentform">
              <form action="studentValidation.php" method="post" onsubmit="return student_validateForm()">
                 <div class="input-layer">
                     <div class="fname">
@@ -311,46 +312,42 @@
     </div>
 
     <script>
+
+
+
         function company_validateForm() {
-            // Get form elements
             var companyName = document.getElementById("companyname").value;
             var contactPerson = document.getElementById("contactperson").value;
             var email = document.getElementById("companyemail").value;
             var phoneNum = document.getElementById("companyphonenum").value;
-            var password = document.getElementById("password").value;
-            var confirmPassword = document.getElementById("cpassword").value;
+            var password = document.getElementById("companypassword").value;
+            var confirmPassword = document.getElementById("companyrepassword").value;
             
-            // Regular expressions for validation
-            var regIdPattern = /^[A-Za-z0-9]{6,}$/;
             var phoneNumPattern = /^[0-9]{10}$/;
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            var passwordpattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-            // Validate Company Name
+            // Validations
             if (companyName === "") {
                 alert("Company Name is required.");
                 return false;
             }
 
-            // Validate Contact Person
             if (contactPerson === "") {
                 alert("Contact Person is required.");
                 return false;
             }
 
-             // Validate Phone Number
-             if (!phoneNumPattern.test(phoneNum)) {
+            if (!phoneNumPattern.test(phoneNum)) {
                 alert("Phone number should be 10 digits long.");
                 return false;
             }
 
-            // Validate Email
-            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailPattern.test(email)) {
                 alert("Please enter a valid email address.");
                 return false;
             }
 
-           
-            var passwordpattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
             if (!passwordpattern.test(password)) {
                 alert("Password must be at least 8 characters long, including at least one special character and one uppercase letter.");
                  return false;
@@ -360,9 +357,12 @@
                 
                 return false;
             }
-            // If all validations pass
-            return false;
+            
+            return true;
         }
+
+
+
         function student_validateForm(){
         //Get form Elements
             var fname= document.getElementById("studentfname").value;
@@ -376,7 +376,14 @@
             var City =document.getElementById('studentcity').value;
             var userpassword =document.getElementById('studentpassword').value;
             var cpassword = document.getElementById('studentrepassword').value;
-        //validate Name
+
+
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            var phoneNumPattern = /^[0-9]{10}$/;
+            var passwordpattern = /^(?=.*[A-Z])(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+
+
+            //validations
             if (fname === "") {
                 alert("First Name is required.");
                 return false;
@@ -406,45 +413,57 @@
                 alert("Year of Passing is required.");
                 return false;
             }
-            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
             if (!emailPattern.test(useremail)) {
                 alert("Please enter a valid email address.");
                 return false;
             }
-            // Validate Phone Number
-            var phoneNumPattern = /^[0-9]{10}$/;
             if (!phoneNumPattern.test(Phone)) {
                 alert("Phone number should be 10 digits long.");
                 return false;
             }
-            var passwordpattern = /^(?=.*[A-Z])(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
+            if (college === "") {
+                alert("College Name is required.");
+                return false;
+            }
+            if (userpassword === "") {
+                alert("Password is required.");
+                return false;
+            }
+            if (cpassword === "") {
+                alert("Confirm password is required.");
+                return false;
+            }
             if (!passwordpattern.test(userpassword)) {
                 alert("Password must be at least 8 characters long, including at least one special character and one uppercase letter.");
                  return false;
-                 }
+            }
             if(userpassword !== cpassword){
                 alert("Two passwords must be Same");
                 return false;
             }
-             // If all validations pass
             return true;
        }
+
+
         const toggleCheckbox = document.getElementById('checkbox-toggle');
         const studentContainer = document.getElementById('studentform');
-        const registrationContainer = document.getElementById('companyform');
+        const CompanyContainer = document.getElementById('companyform');
 
         toggleCheckbox.addEventListener('change', function() {
             if (this.checked) {
                 studentContainer.style.display = 'block';
-                registrationContainer.style.display = 'none';
+                CompanyContainer.style.display = 'none';
             } else {
                 studentContainer.style.display = 'none';
-                registrationContainer.style.display = 'block';
+                CompanyContainer.style.display = 'block';
             }
         });
 
-        // Initial state
-        registrationContainer.style.display = 'block';
+        CompanyContainer.style.display = 'block';
+        studentContainer.style.display = 'none';
+
+
     </script>
 </body>
 </html>

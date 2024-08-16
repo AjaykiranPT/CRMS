@@ -77,14 +77,6 @@
         color: rgb(255, 255, 255);
         transition: 0.6s;
     }
-    .forgot-dob-l::after{
-        content: "(dd/mm/yyyy)";
-        visibility: hidden;
-    }
-    
-    .input-layer .forgot-dob:focus ~ .forgot-dob-l::after{
-       visibility: visible;
-    }
     .input-layer label{
         position: absolute;
         top: 50%;
@@ -300,19 +292,23 @@
 </style>
 </head>
 <body>
+
     <div class="container">
+
         <div class="slopebox"></div>
         <div class="slopebox2"></div>
+
+
         <!-- lOGIN  -->
         <div class="login-form">
             <h2 class="animation" style="--D:1">LOGIN</h2>
-            
-            <form action="loginvalidation.php" method="POST" onsubmit="loginValidation()">
+
+            <form action="loginvalidation.php" method="POST" onsubmit='return loginValidation()'>
+                
                 <div class="input-layer animation" style="--D:2">
                     <input type="text" name="login_email" id="login_email" required>
                     <label for="login_email">EMAIL </label>
                     <i class="fa-regular fa-user"></i>
-                    
                 </div>
                 <div class="input-layer animation" style="--D:3">
                     <input type="password" name="login_password" id="login_password" required>
@@ -320,7 +316,6 @@
                     <i class="fa-solid fa-lock"></i>
                 </div>
                 <div class="errordiv">
-                
                     <?php
                         if(isset($_GET['error'])){
                             $error_message=htmlspecialchars($_GET['error']);
@@ -328,13 +323,11 @@
                             unset($_GET['error']);
                        } 
                        if(isset($_GET['message'])){
-                        echo "<p class='pos'>{$_GET['message']}</p>";
-                        unset($_GET['message']);
-                   } 
+                            echo "<p class='pos'>{$_GET['message']}</p>";
+                            unset($_GET['message']);
+                        } 
                     ?>
-
-                </label>
-            </div>
+                </div>
                 <div class="input-layer animation" style="--D:4">
                     <input type="submit" value="LOGIN" class="login">
                 </div>
@@ -343,6 +336,9 @@
                 </div>
             </form>
         </div>
+
+
+        <!-- INFORMATION IN lOGIN  -->
         <div class="information login">
             <H2 class="animation" style="--D:0">WELCOME<br> BACK!</H2>
             <div class="changeslide signup animation" style="--D:1">
@@ -351,26 +347,29 @@
             </div>
         </div>
 
+
+        
        <!-- FORGOT -->
        <div class="forgot-form">
         <h2 class="animation" class="--D:1">FORGOT PASSWORD</h2>
-        <form action="">
+        <form action="forgotValidation.php" method="POST" onsubmit='return forgotValidation()'>
+           
             <div class="input-layer animation" class="--D:2">
-                <input type="text" name="forgot-email" id="forgot-email" required>
-                <label for="forgot-email">EMAIL </label>
+                <input type="text" name="forgot_email" id="forgot_email" required>
+                <label for="forgot_email">EMAIL </label>
             
             </div>
             <div class="input-layer animation" class="--D:3">
-                <input type="text" class="forgot-dob" name="forgot-dob" id="forgot-dob" required> 
-                <label class="forgot-dob-l" for="forgot-dob">DOB </label>  
+                <input type="text" class="forgot_phone" name="forgot_phone" id="forgot_phone" required> 
+                <label  for="forgot_phone">Phone number </label>  
             </div>
             <div class="input-layer animation" class="--D:4">
-                <input type="password" name="forgot-password" id="forgot-password" required>
+                <input type="password" name="forgot_password" id="forgot_password" required>
                 <label for="login-password">NEW PASSWORD</label>
             </div>
             <div class="input-layer animation" class="--D:5">
-                <input type="password" name="forgot-cpassword" id="forgot-cpassword" required>
-                <label for="login-cpassword">CONFIRM PASSWORD</label>
+                <input type="password" name="forgot_cpassword" id="forgot_cpassword" required>
+                <label for="forgot_cpassword">CONFIRM PASSWORD</label>
             </div>
     
             <div class="input-layer animation" class="--D:6">
@@ -378,6 +377,9 @@
             </div>
         </form>
     </div>
+
+
+    <!-- INFORMATION IN FORGOT  -->
     <div class="information forgot animation">
         <H2 class="animation">WELCOME<br> BACK!</H2>
         <div class="changeslide forgot animation" >
@@ -385,28 +387,93 @@
             <button class="loginlink">BACK TO LOGIN</button>
         </div>
     </div>
-    </div>   
-    <script>const container=document.querySelector('.container');
+    </div> 
+    
+    
+
+    <script>
+
+        function loginValidation(){
+            var login_email = document.getElementById("login_email").value;
+            var login_password = document.getElementById('login_password').value;
+
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (login_email === "") {
+                alert("Email is required.");
+                return false;
+            }
+            if (!emailPattern.test(login_email)) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+            if (login_password === "") {
+                alert("Password is required.");
+                return false;
+            }
+            
+            return true;
+
+        }
+
+
+        function forgotValidation(){
+            var forgot_email = document.getElementById("forgot_email").value;
+            var forgot_phone = document.getElementById("forgot_phone").value;
+            var forgot_password = document.getElementById("forgot_password").value;
+            var forgot_cpassword = document.getElementById('forgot_cpassword').value;
+            
+
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            var phoneNumPattern = /^[0-9]{10}$/;
+
+            if (login_email === "") {
+                alert("Email is required.");
+                return false;
+            }
+            if (!emailPattern.test(login_email)) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+            if (!phoneNumPattern.test(forgot_phone)) {
+                alert("Phone number should be 10 digits long.");
+                return false;
+            }
+            if (forgot_password === "") {
+                alert("Password is required.");
+                return false;
+            }
+            if (forgot_cpassword === "") {
+                alert("Password is required.");
+                return false;
+            }
+            if (!passwordpattern.test(userpassword)) {
+                alert("Password must be at least 8 characters long, including at least one special character and one uppercase letter.");
+                 return false;
+            }
+            if(userpassword !== cpassword){
+                alert("Two passwords must be Same");
+                return false;
+            }
+            
+            return true;
+
+        }
+
+        const container=document.querySelector('.container');
         const forgotlink=document.querySelector('.forgotlink');
         const loginlink=document.querySelector('.loginlink');
-        const error=document.querySelector('.errordiv');
-        //const login=document.querySelector('.login');
+    
+        // FOR SHIFT
         forgotlink.addEventListener('click',()=>{
             container.classList.add('active');
-            error.style.display = 'none';
         })
         loginlink.addEventListener('click',()=>{
             container.classList.remove('active');
         })
         
-         function loginValidation(){
-         //       alert("USERNAME AND PASSWORD NOT NULL");
-        //     // const username=document.getElementById('username');
-        //     // const password=document.getElementById('password');
-        //     // if(username.value==''|| password.value=='' ){
-            
-        //     // }
-         }</script>
+
+    </script>
 
 </body>
 </html>
