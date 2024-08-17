@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 11, 2024 at 01:32 PM
+-- Generation Time: Aug 17, 2024 at 08:54 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -51,45 +51,6 @@ INSERT INTO `account_login` (`account_email`, `account_password`, `account_type`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `admin`
---
-
-CREATE TABLE `admin` (
-  `username` varchar(20) NOT NULL,
-  `password` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `admin`
---
-
-INSERT INTO `admin` (`username`, `password`) VALUES
-('admin', 'ams102');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `adminacc`
---
-
-CREATE TABLE `adminacc` (
-  `AdminNo` int(11) NOT NULL,
-  `AdminName` varchar(50) DEFAULT NULL,
-  `AdminUsername` varchar(255) DEFAULT NULL,
-  `AdminPassword` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `adminacc`
---
-
-INSERT INTO `adminacc` (`AdminNo`, `AdminName`, `AdminUsername`, `AdminPassword`) VALUES
-(1, 'ABIN M S', 'Abinms', 'Abinms123'),
-(2, 'AJAYKIRAN P T', 'Ajaykiranpt', 'Ajaykiran123');
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `admin_details`
 --
 
@@ -107,35 +68,6 @@ CREATE TABLE `admin_details` (
 INSERT INTO `admin_details` (`id`, `account_email`, `user_name`, `DOB`) VALUES
 (1, 'abinms@gmail.com', 'Abin M S', '2004-01-11'),
 (2, 'ajaykiran1221@gmail.com', 'AJAYKIRAN P T', '2005-01-25');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `applications`
---
-
-CREATE TABLE `applications` (
-  `ApplicationID` int(11) NOT NULL,
-  `username` varchar(15) DEFAULT NULL,
-  `JobID` varchar(15) DEFAULT NULL,
-  `ApplicationDate` date DEFAULT NULL,
-  `Status` varchar(50) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `company`
---
-
-CREATE TABLE `company` (
-  `RegID` int(11) NOT NULL,
-  `CompanyName` varchar(50) DEFAULT NULL,
-  `ContactPerson` varchar(30) DEFAULT NULL,
-  `Email` varchar(40) DEFAULT NULL,
-  `Phone` varchar(15) DEFAULT NULL,
-  `password` varchar(15) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -161,40 +93,6 @@ INSERT INTO `company_detatils` (`Comapny_ID`, `Company_name`, `Contact_person`, 
 (15, 'ABC', 'abin', 'abc@gmail.com', '1234567890', '2024-08-11 09:58:06'),
 (16, 'fdgdf', 'fgdfsgfd', 'fgsdgfds@gmail.com', '1234567890', '2024-08-11 10:05:53'),
 (17, 'asdfg', 'asdfg', 'asdfg@gmail.com', '0987654321', '2024-08-11 10:10:16');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `jobpostings`
---
-
-CREATE TABLE `jobpostings` (
-  `JobID` varchar(15) NOT NULL,
-  `RegID` int(11) DEFAULT NULL,
-  `JobTitle` varchar(50) DEFAULT NULL,
-  `JobDescription` text DEFAULT NULL,
-  `Location` varchar(30) DEFAULT NULL,
-  `Deadline` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `students`
---
-
-CREATE TABLE `students` (
-  `FirstName` varchar(30) DEFAULT NULL,
-  `LastName` varchar(30) DEFAULT NULL,
-  `Email` varchar(50) NOT NULL,
-  `Phone` varchar(15) DEFAULT NULL,
-  `Gender` varchar(10) NOT NULL,
-  `Course` varchar(50) DEFAULT NULL,
-  `College` varchar(100) DEFAULT NULL,
-  `YearOfPassing` int(11) DEFAULT NULL,
-  `City` varchar(25) NOT NULL,
-  `password` varchar(25) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -234,13 +132,6 @@ ALTER TABLE `account_login`
   ADD PRIMARY KEY (`account_email`);
 
 --
--- Indexes for table `adminacc`
---
-ALTER TABLE `adminacc`
-  ADD PRIMARY KEY (`AdminNo`),
-  ADD UNIQUE KEY `AdminUsername` (`AdminUsername`);
-
---
 -- Indexes for table `admin_details`
 --
 ALTER TABLE `admin_details`
@@ -248,36 +139,11 @@ ALTER TABLE `admin_details`
   ADD KEY `account_email` (`account_email`);
 
 --
--- Indexes for table `applications`
---
-ALTER TABLE `applications`
-  ADD PRIMARY KEY (`ApplicationID`),
-  ADD KEY `JobID` (`JobID`);
-
---
--- Indexes for table `company`
---
-ALTER TABLE `company`
-  ADD PRIMARY KEY (`RegID`);
-
---
 -- Indexes for table `company_detatils`
 --
 ALTER TABLE `company_detatils`
   ADD PRIMARY KEY (`Comapny_ID`),
   ADD KEY `account_email` (`account_email`);
-
---
--- Indexes for table `jobpostings`
---
-ALTER TABLE `jobpostings`
-  ADD PRIMARY KEY (`JobID`);
-
---
--- Indexes for table `students`
---
-ALTER TABLE `students`
-  ADD PRIMARY KEY (`Email`);
 
 --
 -- Indexes for table `student_detatils`
