@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Inserting data into Table
 
         $hashed_password = password_hash($companypassword, PASSWORD_BCRYPT);   
-        $stmt = $conn->prepare("INSERT INTO company_detatils (Company_name,Contact_person,account_email,PhoneNum) VALUES (?,?,?,?)");
+        $stmt = $conn->prepare("INSERT INTO company_details (Company_name,Contact_person,account_email,PhoneNum) VALUES (?,?,?,?)");
         $stmt->bind_param("ssss",$companyname,$contactperson,$email,$phonenum);
         $inst=$conn->prepare("INSERT INTO account_login (account_email,account_password,account_type) VALUES(?,?,?)");
         $inst->bind_param("sss",$email,$hashed_password,$account_type);
