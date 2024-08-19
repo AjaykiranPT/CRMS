@@ -331,10 +331,10 @@
                 <div class="input-layer animation" style="--D:4">
                     <input type="submit" value="LOGIN" class="login">
                 </div>
-                <div class="forgot animation" style="--D:5">
+            </form>
+            <div class="forgot animation" style="--D:5">
                     <button class="forgotlink">Forgot password?</button>
                 </div>
-            </form>
         </div>
 
 
@@ -463,10 +463,12 @@
         const container=document.querySelector('.container');
         const forgotlink=document.querySelector('.forgotlink');
         const loginlink=document.querySelector('.loginlink');
+        const loginmessage=document.querySelector('.errordiv');
     
         // FOR SHIFT
         forgotlink.addEventListener('click',()=>{
             container.classList.add('active');
+            loginmessage.style.display='none';
         })
         loginlink.addEventListener('click',()=>{
             container.classList.remove('active');
