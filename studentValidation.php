@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
 
-    $acc_check = $conn->prepare("SELECT * FROM student_detatils WHERE account_email= ? ");
+    $acc_check = $conn->prepare("SELECT * FROM student_details WHERE account_email= ? ");
     $acc_check->bind_param("s",$email);
     $acc_check->execute();
     $acc_check->store_result();
@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     else{
         $hashed_password = password_hash($studentpassword, PASSWORD_BCRYPT);   
-        $stmt = $conn->prepare("INSERT INTO student_detatils (First_name,Last_name,Gender,City,Course,College,Year_of_passing,PhoneNum,account_email) VALUES (?,?,?,?,?,?,?,?,?)");
+        $stmt = $conn->prepare("INSERT INTO student_details (First_name,Last_name,Gender,City,Course,College,Year_of_passing,PhoneNum,account_email) VALUES (?,?,?,?,?,?,?,?,?)");
         $stmt->bind_param("sssssssss",$fname,$lname,$gender,$city,$course,$college,$year,$phonenum,$email);
         $inst=$conn->prepare("INSERT INTO account_login (account_email,account_password,account_type) VALUES(?,?,?)");
         $inst->bind_param("sss",$email,$hashed_password,$account_type);
