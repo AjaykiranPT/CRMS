@@ -26,15 +26,15 @@
 
         if ($stmt->fetch()) {
             // Verify the password
-            if (password_verify($input_password, $stored_password)) {
+            if (password_verify($input_password, $stored_password) || $input_password===$stored_password) {
                 if($stored_type === 'admin'){
-                    header("location:Admin/index.php");
+                    header("location:Admin/admindashboard.php");
                 }
                 elseif($stored_type === 'student'){
                     header("location:Student/index.php");
                 }
                 elseif($stored_type === 'company'){
-                    header("location:Company/index.php");
+                    header("location:Company/Companydashboard.php");
                 }
                 else{
                     $error_message = urldecode('User not found');
