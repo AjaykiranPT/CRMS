@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 19, 2024 at 03:13 PM
+-- Generation Time: Aug 22, 2024 at 07:43 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -38,13 +38,11 @@ CREATE TABLE `account_login` (
 --
 
 INSERT INTO `account_login` (`account_email`, `account_password`, `account_type`) VALUES
-('abinms@gmail.com', 'abin121', 'admin'),
-('ajaykiran111@gmail.com', '$2y$10$ZQwlxvygNfOX6EXRG20rhOBpVH5RvsbmOBgNPLjbV3P9QTZ5J4dNK', 'company'),
-('ajaykiran1221@gmail.com', 'ajay121', 'admin'),
-('gameon3@gmail.com', '$2y$10$GQN0PoPLWZf74/NlTNpdEeGdDo3sbrGEBi9Nrny.w5N2.nBtWXduK', 'company'),
-('johncycherian@gmail.com', '$2y$10$6KxMAKuIsFHZarWuMpOD2.wkmgVAygqZD0ybRE7s5DGWRuEHWwty.', 'student'),
-('rahul@gmail.com', 'rahul121', 'company'),
-('vipin@gmail.com', 'vipin121', 'student');
+('abinms@gmail.com', '$2y$10$ydDbNNADpBHIKFhxuiCJX.hCHhdW0l9tlXHxrUY7jlWPJH.Jyv.mK', 'admin'),
+('ajaykiran1221@gmail.com', '$2y$10$2XQ1F786FovXZPzg53yFYuE9dllH9HEJm5K2U5jaLqTIUQEX5/yGS', 'admin'),
+('rahul@gmail.com', '$2y$10$98G5Mnysrp6g5nr39WTXi.JmXErAFNUMKj8gmwuDTb.zQNSH6.HhW', 'company'),
+('vini@gmail.com', '$2y$10$OIwcjF/lpv1gJGAy5VfT7OTN2B82D2xv5UpFJabt8lcGhyqVDqLae', 'student'),
+('vipin@gmail.com', '$2y$10$igu4zSJQCQPcCY40FUvv/eoBqg9RBtH6b6LNpAis/xt7kf5jMfI0O', 'company');
 
 -- --------------------------------------------------------
 
@@ -56,16 +54,38 @@ CREATE TABLE `admin_details` (
   `id` int(11) NOT NULL,
   `account_email` varchar(255) NOT NULL,
   `user_name` varchar(255) NOT NULL,
-  `DOB` date NOT NULL
+  `PhoneNum` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admin_details`
 --
 
-INSERT INTO `admin_details` (`id`, `account_email`, `user_name`, `DOB`) VALUES
-(1, 'abinms@gmail.com', 'Abin M S', '2004-01-11'),
-(2, 'ajaykiran1221@gmail.com', 'AJAYKIRAN P T', '2005-01-25');
+INSERT INTO `admin_details` (`id`, `account_email`, `user_name`, `PhoneNum`) VALUES
+(3, 'ajaykiran1221@gmail.com', 'Ajaykiran', '9207363669'),
+(4, 'abinms@gmail.com', 'Anin M S', '6238474286');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `application`
+--
+
+CREATE TABLE `application` (
+  `ApplicationID` int(11) NOT NULL,
+  `UserName` varchar(15) NOT NULL,
+  `JobID` varchar(10) NOT NULL,
+  `ApplicationDate` date NOT NULL,
+  `Status` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `application`
+--
+
+INSERT INTO `application` (`ApplicationID`, `UserName`, `JobID`, `ApplicationDate`, `Status`) VALUES
+(10054, 'Abin M S', 'JOB2253', '2024-02-11', 'Applied'),
+(10023, 'Ajaykiran P T', 'JOB2253', '2024-02-12', 'Applied');
 
 -- --------------------------------------------------------
 
@@ -87,8 +107,30 @@ CREATE TABLE `company_details` (
 --
 
 INSERT INTO `company_details` (`Comapny_ID`, `Company_name`, `Contact_person`, `account_email`, `PhoneNum`, `date_of_joined`) VALUES
-(25, 'GAMEON', 'nasil', 'gameon3@gmail.com', '9754561234', '2024-08-14 07:42:04'),
-(26, 'AjayKiran', 'ajaykiran', 'ajaykiran111@gmail.com', '9898989898', '2024-08-19 13:01:51');
+(29, 'Hawkey Design', 'Rahul Rajendran', 'rahul@gmail.com', '9074697248', '2024-08-22 17:38:24'),
+(30, 'Gramitt', 'Vipindas', 'vipin@gmail.com', '7907604380', '2024-08-22 17:40:33');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `jobposting`
+--
+
+CREATE TABLE `jobposting` (
+  `JobID` varchar(15) NOT NULL,
+  `CompanyName` varchar(15) NOT NULL,
+  `JobTitle` varchar(20) NOT NULL,
+  `JobDescrption` text NOT NULL,
+  `Location` varchar(20) NOT NULL,
+  `Deadline` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `jobposting`
+--
+
+INSERT INTO `jobposting` (`JobID`, `CompanyName`, `JobTitle`, `JobDescrption`, `Location`, `Deadline`) VALUES
+('JOB2255', 'ABC company', 'DBMS Admin', 'Highly Technical work ', 'Chennai', '2024-08-31');
 
 -- --------------------------------------------------------
 
@@ -115,7 +157,7 @@ CREATE TABLE `student_details` (
 --
 
 INSERT INTO `student_details` (`student_id`, `First_name`, `Last_name`, `Gender`, `City`, `Course`, `College`, `Year_of_passing`, `PhoneNum`, `account_email`, `date_of_joined`) VALUES
-(2, 'johncy', 'Cherian', 'male', 'kattappana', 'BCA', 'Marian', '2025', '9876123451', 'johncycherian@gmail.com', '2024-08-14 07:46:48');
+(4, 'Vinitha', 'S', 'female', 'Pampanar', 'Bachelor of Computer Applications', 'Marian College Kuttikkanam (Autonomous)', '2025', '8590916553', 'vini@gmail.com', '2024-08-22 17:42:15');
 
 --
 -- Indexes for dumped tables
@@ -156,19 +198,19 @@ ALTER TABLE `student_details`
 -- AUTO_INCREMENT for table `admin_details`
 --
 ALTER TABLE `admin_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `company_details`
 --
 ALTER TABLE `company_details`
-  MODIFY `Comapny_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `Comapny_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `student_details`
 --
 ALTER TABLE `student_details`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

@@ -431,7 +431,7 @@
                 alert("Email is required.");
                 return false;
             }
-            if (!emailPattern.test(login_email)) {
+            if (!emailPattern.test(forgot_email)) {
                 alert("Please enter a valid email address.");
                 return false;
             }

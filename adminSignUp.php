@@ -1,23 +1,11 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-
-    // Get the user input
-    $fname = trim($_POST['studentfname']);
-    $lname = trim($_POST['studentlname']);
-    $gender= trim($_POST['gender']);
-    $city = trim($_POST['studentcity']);
-    $course = trim($_POST['course']);
-    $college = trim($_POST['college']);
-    $year = trim($_POST['yearofpassing']);
-    $phonenum = trim($_POST['studentphonenum']);
-    $email = trim($_POST['studentemail']);
-    $studentpassword= trim($_POST['studentpassword']);
-    $account_type="student";
+    $adminusername = "Anin M S";
+    $phonenum = "6238474286";
+    $email = "abinms@gmail.com";
+    $adminpassword= "Abinms@1234";
+    $account_type="admin";
     
 
-
-    //include Connection
     include 'connection.php';
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
@@ -35,9 +23,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
    
     
     else{
-        $hashed_password = password_hash($studentpassword, PASSWORD_BCRYPT);   
-        $stmt = $conn->prepare("INSERT INTO student_details (First_name,Last_name,Gender,City,Course,College,Year_of_passing,PhoneNum,account_email) VALUES (?,?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("sssssssss",$fname,$lname,$gender,$city,$course,$college,$year,$phonenum,$email);
+        $hashed_password = password_hash($adminpassword, PASSWORD_BCRYPT);   
+        $stmt = $conn->prepare("INSERT INTO admin_details (account_email,user_name,PhoneNum) VALUES (?,?,?)");
+        $stmt->bind_param("sss",$email,$adminusername,$phonenum);
         $inst=$conn->prepare("INSERT INTO account_login (account_email,account_password,account_type) VALUES(?,?,?)");
         $inst->bind_param("sss",$email,$hashed_password,$account_type);
 
@@ -59,6 +47,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $inst->close();
     }
     $conn->close(); 
-} 
-
-?>
