@@ -32,7 +32,10 @@
             $stmt = $conn->prepare("SELECT PhoneNum FROM student_details WHERE account_email = ?");
         } else if ($accountType == 'company') {
             $stmt = $conn->prepare("SELECT PhoneNum FROM company_details WHERE account_email = ?");
-        } else {
+        } 
+        else if(($accountType == 'admin')){
+            $stmt = $conn->prepare("SELECT PhoneNum FROM admin_details WHERE account_email = ?");
+        }else {
             echo "<script> alert('invalid user.') </script>";
         }
 
