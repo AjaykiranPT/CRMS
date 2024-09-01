@@ -5,14 +5,65 @@
     <title>Job Posting Form</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            padding: 0;
+            margin: 0;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            box-sizing: border-box;
+            background-color: #222;
             color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+        }
+        header {
+            background-color:black;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            padding: 10px;
+            margin:15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgb(47, 95, 255);
+            box-shadow:rgba(47, 95, 255, 0.507) 0px 0px 20px;
+            border-radius: 10px 10px;
+            background-color:black;
+        }
+
+        header .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2f5fff;
+            text-decoration: none;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-right: 1rem;
+        }
+
+        nav ul li a {
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            background: #0059ff;
+            color: #ffffff;
+            border-radius: 5px;
         }
 
         .form-container {
@@ -20,26 +71,31 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 400px;
+            width: 50%;
+            justify-content:center;
+            display:inline-flex;
         }
-
+        .form-container form{
+            width:80%;
+        }
         .form-container h2 {
             text-align: center;
-            color: #fff;
+            color: lightblue;
+            display:block;
         }
 
         label {
             color: #fff;
-            font-weight: bold;
         }
 
         input[type="text"], input[type="date"], textarea {
             width: 100%;
-            padding: 10px;
-            margin: 5px 0 20px 0;
-            border: 1px solid #ccc;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            background-color: #1a1a1a;
+            border: 1px solid #2f5fff;
             border-radius: 5px;
-            box-sizing: border-box;
+            color: #ffffff;
         }
 
         button[type="submit"] {
@@ -58,26 +114,39 @@
     </style>
 </head>
 <body>
+<header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="login.php">Home</a></li>
+                    <li><a href="dashboard.php">Dasboard</a></li>
+                    <li><a href="register.php">Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
 <div class="form-container">
     <h2>Post a Job Vacancy</h2>
     <form method="POST" action="">
-        <label for="jobtitle">Job Title:</label>
+        <label for="jobtitle">Job title</label>
         <input type="text" id="jobtitle" name="jobtitle" required>
 
-        <label for="jobid">JobID:</label>
-        <input type="text" id="jobid" name="jobid">
-
-        <label for="companyname">Company Name:</label>
-        <input type="text" id="companyname" name="companyname" required>
-
-        <label for="location">Location:</label>
-        <input type="text" id="location" name="location" required>
 
         <label for="description">Job Description:</label>
         <textarea id="description" name="description" required></textarea>
 
-        <label for="deadline">Deadline:</label>
+        <label for="jobtype">Job type</label>
+        <input type="text" id="jobtype" name="jobtype" required>
+
+
+        <label for="qualification">qualification</label>
+        <input type="text" id="qualification" name="qualification" required>
+
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location" required>
+
+        <label for="deadline">Deadline</label>
         <input type="date" id="deadline" name="deadline">
 
         <button type="submit" name="submitjob">Submit</button>
