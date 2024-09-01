@@ -473,8 +473,6 @@
         loginlink.addEventListener('click',()=>{
             container.classList.remove('active');
         })
-        
-
     </script>
 
 </body>

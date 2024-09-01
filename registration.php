@@ -230,6 +230,7 @@
                 <div class="input-layer">
                     <input type="text" id="companyemail" name="companyemail" placeholder=" ">
                     <label for="companyemail">Email</label>
+                    <span id="companyemailStatus"></span>
                 </div>
                 <div class="input-layer">
                     <input type="text" id="companyphonenum" name="companyphonenum" placeholder=" ">
@@ -294,6 +295,7 @@
                 <div class="input-layer">
                     <input type="text" id="studentemail" name="studentemail" placeholder=" ">
                     <label for="studentemail">Email</label>
+                    <span id="studentemailStatus"></span>
                 </div>
                  <div class="input-layer">
                      <input type="password" id="studentpassword" name="studentpassword" placeholder=" ">
@@ -464,6 +466,67 @@
         studentContainer.style.display = 'none';
 
 
+        document.getElementById('companyemail').addEventListener('input', function() {
+            var email = this.value;
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailPattern.test(email)) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'check_email.php', true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.onload = function() {
+                    if (this.status == 200) {
+                        if (this.responseText === 'taken') {
+                            var response = this.responseText.trim(); // Trim any extra whitespace
+                            console.log(response);
+                            document.getElementById('companyemailStatus').textContent = 'Email already taken';
+                            document.getElementById('companyemailStatus').style.color = 'red';
+                        } else {
+                            document.getElementById('companyemailStatus').textContent = 'Email available';
+                            document.getElementById('companyemailStatus').style.color = 'green';
+                        }
+                    }
+                };
+                xhr.send('email=' + encodeURIComponent(email));
+            }
+            else if(email===''){
+                document.getElementById('companyemailStatus').textContent = '  ';
+            }
+            else{
+                document.getElementById('companyemailStatus').textContent = 'Please enter a valid email address.';
+                document.getElementById('companyemailStatus').style.color = 'red';
+            }
+        });
+
+        document.getElementById('studentemail').addEventListener('input', function() {
+            var email = this.value;
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (emailPattern.test(email)) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'check_email.php', true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.onload = function() {
+                    if (this.status == 200) {  
+                        var response = this.responseText.trim(); // Trim any extra whitespace
+                        console.log(response);
+                        if (this.responseText === 'taken') {
+                            document.getElementById('studentemailStatus').textContent = 'Email already taken';
+                            document.getElementById('studentemailStatus').style.color = 'red';
+                        }else {
+                            document.getElementById('studentemailStatus').textContent = 'Email available';
+                            document.getElementById('studentemailStatus').style.color = 'green';
+                        }
+                    }
+                }
+                xhr.send('email=' + encodeURIComponent(email));
+            }
+            else if(email===''){
+                document.getElementById('studentemailStatus').textContent = '  ';
+            }
+            else{
+                document.getElementById('studentemailStatus').textContent = 'Please enter a valid email address.';
+                document.getElementById('studentemailStatus').style.color = 'red';
+            }
+        });
     </script>
 </body>
 </html>
