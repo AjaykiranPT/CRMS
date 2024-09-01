@@ -475,9 +475,9 @@
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 xhr.onload = function() {
                     if (this.status == 200) {
-                        if (this.responseText === 'taken') {
-                            var response = this.responseText.trim(); // Trim any extra whitespace
-                            console.log(response);
+                        var response = this.responseText.trim();
+
+                        if (response == 'taken') {
                             document.getElementById('companyemailStatus').textContent = 'Email already taken';
                             document.getElementById('companyemailStatus').style.color = 'red';
                         } else {
@@ -505,9 +505,10 @@
                 xhr.open('POST', 'check_email.php', true);
                 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
                 xhr.onload = function() {
+
+
                     if (this.status == 200) {  
-                        var response = this.responseText.trim(); // Trim any extra whitespace
-                        console.log(response);
+                        var response = this.responseText.trim(); 
                         if (this.responseText === 'taken') {
                             document.getElementById('studentemailStatus').textContent = 'Email already taken';
                             document.getElementById('studentemailStatus').style.color = 'red';
