@@ -266,7 +266,7 @@
                  
                 <div class="input-layer">
                     <select name="gender" id='gender'>
-                        <option value="" selected disabled>SELECT GENDER </option>
+                        <option value="" selected disabled>Select Gender </option>
                         <option value="male">MALE</option>
                         <option value="female">FEMALE</option>
                         <option value="others">OTHERS</option>
@@ -277,12 +277,21 @@
                     <label for="studentcity">City</label>
                 </div>
                 <div class="input-layer">
-                    <input type="text" id="course" name="course" placeholder=" ">
-                    <label for="course">Course</label>
-                </div>
-                <div class="input-layer">
                     <input type="text" id="college" name="college" placeholder=" ">
                     <label for="college">College</label>
+                </div>
+                <div class="input-layer">
+                    <select name="course" id="course" class="course">
+                        <option value="" selected disabled>Select Course</option>
+                        <option value="bca">Bachelor of Computer Applications</option>
+                        <option value="bcom">Bachelor of Commerce</option>
+                        <option value="bba">Bachelor of Business Administration</option>
+                        <option value="bsw">Bachelor of Social Work</option>
+                        <option value="maths">B.Sc Mathematics</option>
+                        <option value="physics">B.Sc Physics</option>
+                        <option value="chemistry">B.Sc Chemistry</option>
+                        <option value="history">BA History</option>
+                    </select>
                 </div>
                 <div class="input-layer">
                     <input type="number" id="yearofpassing" name="yearofpassing" placeholder=" ">
@@ -403,7 +412,7 @@
                 return false;
             }
             if (course === "") {
-                alert("Course Name is required.");
+                alert("Course is required.");
                 return false;
             }
             if (college === "") {
