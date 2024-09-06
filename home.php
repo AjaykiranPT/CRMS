@@ -238,12 +238,32 @@
             position: absolute;
             display:flex;
             background: linear-gradient(135deg,#0059ff,rgb(0, 0, 0));
-            width:900px;
+            width:55%;
             height:1000px;
             right:-100px;
             top:-100px;
             transform:rotate(20deg);
         }
+        @media (max-width: 768px) {
+    .feature {
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    nav ul {
+        display: none;
+        flex-direction: column;
+    }
+
+    nav ul.showing {
+        display: flex;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -253,7 +273,7 @@
             <nav>
                 <ul>
                     <li><a href="login.php">Login</a></li>
-                    <li><a href="register.php">Register</a></li>
+                    <li><a href="registration.php">Register</a></li>
                 </ul>
             </nav>
         </div>
@@ -284,49 +304,45 @@
         </div>
     </section>
     <section class="features" id="features">
+    <h2>New Jobs</h2>
     <?php
         include 'connection.php';
         if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+            echo "<p>Connection failed: " . $conn->connect_error . "</p>";
         } else {
-            // SQL query to select all records from the table
-            $sql = "SELECT * FROM application";
-            $result = $conn->query($sql);
-            if ($result === false) {
-                echo "Error in SQL query: " . $conn->error . "<br>"; // Debugging statement
-            } 
-            // Check if there are records
-            if ($result->num_rows > 0) {
-                // Start the HTML table and add headers
-                echo "<table>
-                        <tr>
-                            <th>ApplicationID</th>
-                            <th>UserName</th>
-                            <th>JobID</th>
-                            <th>ApplicationDate</th>
-                            <th>Status</th>
-                        </tr>";
-                
-                // Output data of each row
-                while($row = $result->fetch_assoc()) {
-                    echo "<tr>
-                            <td>" . $row["ApplicationID"]. "</td>
-                            <td>" . $row["UserName"]. "</td>
-                            <td>" . $row["JobID"]. "</td>
-                            <td>" . $row["ApplicationDate"]. "</td>
-                            <td>" . $row["Status"]. "</td>
-                          </tr>";
+            $stmt = $conn->prepare("SELECT Company_id, jobtitle, deadline, course FROM job_posting LIMIT 3");
+            $stmt->execute();
+            $stmt->store_result();
+            $stmt->bind_result($company_id, $jobtitle, $deadline, $course);
+
+            if ($stmt->num_rows > 0) {
+                while ($stmt->fetch()) {
+                    $inst = $conn->prepare("SELECT Company_name FROM company_details WHERE company_id = ?");
+                    $inst->bind_param('i', $company_id);
+                    $inst->execute();
+                    $inst->store_result();
+                    $inst->bind_result($Company_name);
+                    $inst->fetch();
+
+                    echo "<div class='feature' id='newjob'>
+                            <h3>" . htmlspecialchars($jobtitle) . "</h3>
+                            <p>Company : " . htmlspecialchars($Company_name) . "</p>
+                            <p>Qualification : " . htmlspecialchars($course) . "</p>
+                            <p> Deadline : " . htmlspecialchars($deadline) . "</div>
+                          </div>";
+
+                    $inst->close();
                 }
-                // End the HTML table
-                echo "</table>";
             } else {
-                echo "0 results";
+                echo "<p>No jobs found.</p>";
             }
+            $stmt->close();
         }
-        // Close connection
         $conn->close();
     ?>
-    </section>
+</section>
+
+
 
     <section class="contact" id="contact">
         <div class="square">
@@ -352,25 +368,39 @@
         </div>
     </section>
 
-        <script>
-        // Toggle Menu for Mobile View
-        const menuToggle = document.querySelector('.menu-toggle');
-        const nav = document.querySelector('nav ul');
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+    // Toggle Menu for Mobile View
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('nav ul');
 
-        menuToggle.addEventListener('click', () => {
-            nav.classList.toggle('showing');
-        });
+    menuToggle.addEventListener('click', () => {
+        nav.classList.toggle('showing');
+    });
 
-        // Form Validation
-        document.getElementById('contact-form').addEventListener('submit', function(event) {
-            const name = document.querySelector('input[name="name"]').value;
-            const email = document.querySelector('input[name="email"]').value;
-            const message = document.querySelector('textarea[name="message"]').value;
-            if (name === "" || email === "" || message === "") {
-                alert("Please fill out all fields.");
-                event.preventDefault();
+    // Form Validation
+    document.getElementById('contact-form').addEventListener('submit', function (event) {
+        const name = document.querySelector('input[name="name"]').value;
+        const email = document.querySelector('input[name="email"]').value;
+        const message = document.querySelector('textarea[name="message"]').value;
+        if (name === "" || email === "" || message === "") {
+            alert("Please fill out all fields.");
+            event.preventDefault();
+        }
+    });
+
+    // Click Event for Job Features
+    document.querySelectorAll('.feature').forEach(function (jobElement) {
+        jobElement.addEventListener('click', function () {
+            alert("You clicked on a job feature!");
+            const result = confirm("Login for further details?");
+            if (result) {
+                window.location.href = 'login.php';
             }
         });
+    });
+});
+
     </script>
 </body>
 </html>
