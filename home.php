@@ -141,6 +141,7 @@
             border-radius: 5px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease;
+
         }
 
         .feature:hover {
@@ -245,25 +246,19 @@
             transform:rotate(20deg);
         }
         @media (max-width: 768px) {
-    .feature {
-        width: 100%;
-        margin-bottom: 1rem;
-    }
+            .feature {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
 
-    .menu-toggle {
-        display: block;
-    }
+            .menu-toggle {
+                display: block;
+            }
 
-    nav ul {
-        display: none;
-        flex-direction: column;
-    }
-
-    nav ul.showing {
-        display: flex;
-    }
-}
-
+            nav ul {
+                font-size:10px;
+            }     
+        }
     </style>
 </head>
 <body>
@@ -289,7 +284,7 @@
             <div class="feature">
                 <i class="icon-job-matching"></i>
                 <h3>Job Matching</h3>
-                <p>Find the best job matches based on your profile and preferences.</p>
+                <p>Find the best job matches based on your profile.</p>
             </div>
             <div class="feature">
                 <i class="icon-tracking"></i>

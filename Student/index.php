@@ -5,7 +5,7 @@
     <title>index</title>
 </head>
 <body>
-    <h1>JOBS FOR you</h1>
+    <h1>JOBS FOR YOU</h1>
     <?php
         include 'connection.php';
         if ($conn->connect_error) {
@@ -15,8 +15,9 @@
             $stmt=$conn->prepare("SELECT Course FROM student_details where student_id= ?");
             $stmt->bind_param("i",$user_id);
             $stmt->execute();
-            $stmt->store_result();
-            if ($result === false) {
+            $stmt->bind_result($course);
+            $stmt=$conn->prepare("SELECT * FROM job_posting where course= ?");
+            if ($) {
                 echo "Error in SQL query: " . $conn->error . "<br>";
             } 
             if ($result->num_rows > 0) {
