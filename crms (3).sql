@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 22, 2024 at 07:43 PM
+-- Generation Time: Sep 06, 2024 at 05:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,7 +39,7 @@ CREATE TABLE `account_login` (
 
 INSERT INTO `account_login` (`account_email`, `account_password`, `account_type`) VALUES
 ('abinms@gmail.com', '$2y$10$ydDbNNADpBHIKFhxuiCJX.hCHhdW0l9tlXHxrUY7jlWPJH.Jyv.mK', 'admin'),
-('ajaykiran1221@gmail.com', '$2y$10$2XQ1F786FovXZPzg53yFYuE9dllH9HEJm5K2U5jaLqTIUQEX5/yGS', 'admin'),
+('ajaykiran1221@gmail.com', '$2y$10$96Pt5YZPMec4qKlJ3HQRD.5ylegJc4GnzifL5VQQSnRjwQbR4H7RK', 'admin'),
 ('rahul@gmail.com', '$2y$10$98G5Mnysrp6g5nr39WTXi.JmXErAFNUMKj8gmwuDTb.zQNSH6.HhW', 'company'),
 ('vini@gmail.com', '$2y$10$OIwcjF/lpv1gJGAy5VfT7OTN2B82D2xv5UpFJabt8lcGhyqVDqLae', 'student'),
 ('vipin@gmail.com', '$2y$10$igu4zSJQCQPcCY40FUvv/eoBqg9RBtH6b6LNpAis/xt7kf5jMfI0O', 'company');
@@ -94,7 +94,7 @@ INSERT INTO `application` (`ApplicationID`, `UserName`, `JobID`, `ApplicationDat
 --
 
 CREATE TABLE `company_details` (
-  `Comapny_ID` int(11) NOT NULL,
+  `Company_id` int(11) NOT NULL,
   `Company_name` varchar(255) NOT NULL,
   `Contact_person` varchar(255) NOT NULL,
   `account_email` varchar(255) NOT NULL,
@@ -106,31 +106,34 @@ CREATE TABLE `company_details` (
 -- Dumping data for table `company_details`
 --
 
-INSERT INTO `company_details` (`Comapny_ID`, `Company_name`, `Contact_person`, `account_email`, `PhoneNum`, `date_of_joined`) VALUES
+INSERT INTO `company_details` (`Company_id`, `Company_name`, `Contact_person`, `account_email`, `PhoneNum`, `date_of_joined`) VALUES
 (29, 'Hawkey Design', 'Rahul Rajendran', 'rahul@gmail.com', '9074697248', '2024-08-22 17:38:24'),
 (30, 'Gramitt', 'Vipindas', 'vipin@gmail.com', '7907604380', '2024-08-22 17:40:33');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jobposting`
+-- Table structure for table `job_posting`
 --
 
-CREATE TABLE `jobposting` (
-  `JobID` varchar(15) NOT NULL,
-  `CompanyName` varchar(15) NOT NULL,
-  `JobTitle` varchar(20) NOT NULL,
-  `JobDescrption` text NOT NULL,
-  `Location` varchar(20) NOT NULL,
-  `Deadline` date NOT NULL
+CREATE TABLE `job_posting` (
+  `job_id` int(11) NOT NULL,
+  `company_id` int(11) NOT NULL,
+  `jobtitle` varchar(255) NOT NULL,
+  `job_description` varchar(255) NOT NULL,
+  `job_location` varchar(255) NOT NULL,
+  `posted_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `deadline` date NOT NULL,
+  `course` varchar(255) NOT NULL,
+  `jobtype` enum('fulltime','parttime') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `jobposting`
+-- Dumping data for table `job_posting`
 --
 
-INSERT INTO `jobposting` (`JobID`, `CompanyName`, `JobTitle`, `JobDescrption`, `Location`, `Deadline`) VALUES
-('JOB2255', 'ABC company', 'DBMS Admin', 'Highly Technical work ', 'Chennai', '2024-08-31');
+INSERT INTO `job_posting` (`job_id`, `company_id`, `jobtitle`, `job_description`, `job_location`, `posted_date`, `deadline`, `course`, `jobtype`) VALUES
+(2, 29, 'testing', 'software testing', 'anakkara', '2024-09-04 06:04:13', '2024-09-27', 'bca', 'fulltime');
 
 -- --------------------------------------------------------
 
@@ -180,8 +183,15 @@ ALTER TABLE `admin_details`
 -- Indexes for table `company_details`
 --
 ALTER TABLE `company_details`
-  ADD PRIMARY KEY (`Comapny_ID`),
+  ADD PRIMARY KEY (`Company_id`),
   ADD KEY `account_email` (`account_email`);
+
+--
+-- Indexes for table `job_posting`
+--
+ALTER TABLE `job_posting`
+  ADD PRIMARY KEY (`job_id`),
+  ADD KEY `company_id` (`company_id`);
 
 --
 -- Indexes for table `student_details`
@@ -204,7 +214,13 @@ ALTER TABLE `admin_details`
 -- AUTO_INCREMENT for table `company_details`
 --
 ALTER TABLE `company_details`
-  MODIFY `Comapny_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `Company_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `job_posting`
+--
+ALTER TABLE `job_posting`
+  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `student_details`
@@ -227,6 +243,12 @@ ALTER TABLE `admin_details`
 --
 ALTER TABLE `company_details`
   ADD CONSTRAINT `company_details_ibfk_1` FOREIGN KEY (`account_email`) REFERENCES `account_login` (`account_email`);
+
+--
+-- Constraints for table `job_posting`
+--
+ALTER TABLE `job_posting`
+  ADD CONSTRAINT `job_posting_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `company_details` (`company_id`);
 
 --
 -- Constraints for table `student_details`
