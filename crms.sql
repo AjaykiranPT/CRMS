@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 10, 2024 at 05:38 AM
+-- Generation Time: Sep 11, 2024 at 09:00 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,11 +38,11 @@ CREATE TABLE `account_login` (
 --
 
 INSERT INTO `account_login` (`account_email`, `account_password`, `account_type`) VALUES
-('abinms@gmail.com', '$2y$10$ydDbNNADpBHIKFhxuiCJX.hCHhdW0l9tlXHxrUY7jlWPJH.Jyv.mK', 'admin'),
-('ajaykiran1221@gmail.com', '$2y$10$96Pt5YZPMec4qKlJ3HQRD.5ylegJc4GnzifL5VQQSnRjwQbR4H7RK', 'admin'),
-('rahul@gmail.com', '$2y$10$98G5Mnysrp6g5nr39WTXi.JmXErAFNUMKj8gmwuDTb.zQNSH6.HhW', 'company'),
-('vini@gmail.com', '$2y$10$OIwcjF/lpv1gJGAy5VfT7OTN2B82D2xv5UpFJabt8lcGhyqVDqLae', 'student'),
-('vipin@gmail.com', '$2y$10$igu4zSJQCQPcCY40FUvv/eoBqg9RBtH6b6LNpAis/xt7kf5jMfI0O', 'company');
+('abinms@gmail.com', '$2y$10$0f6O3NJmxWxjfP9SgtHuHO408qQX3ItOcxqLesM.B8FPI095B1NrW', 'admin'),
+('ajaykiran1221@gmail.com', '$2y$10$pxtZSe0M7cMEzQPaMCvi/eu/Ve6tBH0bINk4kQ7T7IQGf/0KkoJT2', 'admin'),
+('rahul@gmail.com', '$2y$10$6yAN/Mri1oVfb37JFm9s2udsPNrdHLH7.OG7I.0pa2zHfv9LtCuyC', 'company'),
+('vini@gmail.com', '$2y$10$wQMKPjrqwCKp0tZXGv5wj.mDS0N1IJ8AlttnuZ.1vSnqa3yWqzPye', 'student'),
+('vipin@gmail.com', '$2y$10$ZusBSefBq.Oa9hvVViMntufrHTnH1zn7du03WOsEQiLmXDovy9oXa', 'company');
 
 -- --------------------------------------------------------
 
@@ -248,7 +248,7 @@ ALTER TABLE `company_details`
 -- Constraints for table `job_posting`
 --
 ALTER TABLE `job_posting`
-  ADD CONSTRAINT `job_posting_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `company_details` (`company_id`);
+  ADD CONSTRAINT `job_posting_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `company_details` (`Company_id`);
 
 --
 -- Constraints for table `student_details`

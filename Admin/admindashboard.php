@@ -42,6 +42,7 @@
             color: #ccc;
             text-decoration: none;
             font-size: 1.2em;
+            cursor: pointer;
             transition: color 0.3s ease;
         }
 
@@ -70,7 +71,7 @@
 
         .dashboard-content {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Three boxes per row */
+            grid-template-columns: repeat(2, 1fr); /* Two boxes per row */
             gap: 20px;
         }
 
@@ -114,19 +115,59 @@
         .box4 {
             background: linear-gradient(135deg, #002200, #000800); /* Dark green gradient */
         }
-    
+
+        /* Profile Settings Styling */
+        .center-box {
+            background-color: #1e90ff; /* Blue background */
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            margin: 20px auto;
+            display: none; /* Hidden by default */
+        }
+
+        button {
+            background-color: #000; /* Black background */
+            color: #fff; /* White text */
+            border: 2px solid #1e90ff; /* Blue border */
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #1e90ff; /* Blue on hover */
+            color: #000; /* Black text on hover */
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid #000; /* Black border */
+            border-radius: 4px;
+            background-color: #333; /* Dark input background */
+            color: #fff; /* White text */
+        }
     </style>
 </head>
 <body>
+
     <div class="sidebar">
         <h2>Admin Menu</h2>
         <ul>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="manageCompany.php">Manage Company </a></li>
+            <li><a href="#" onclick="showDashboard()">Dashboard</a></li>
+            <li><a href="manageCompany.php">Manage Company</a></li>
             <li><a href="application.php">Manage Applications</a></li>
             <li><a href="manageUser.php">Manage Users</a></li>
             <li><a href="#">Report</a></li>
-            <li><a href="#">Settings</a></li>
+            <li><a href="#" onclick="showSettings()">Settings</a></li>
         </ul>
     </div>
 
@@ -134,8 +175,9 @@
         <div class="dashboard-header">
             <h1>Admin Dashboard</h1>
         </div>
-        <div class="dashboard-content">
-            <div class="box box1" onclick ="showCompanies()">
+
+        <div class="dashboard-content" id="dashboardContent">
+            <div class="box box1">
                 <h2> Registered Company</h2>
                 <p>12</p>
             </div>
@@ -147,11 +189,82 @@
                 <h2>Job Posted</h2>
                 <p>50</p>
             </div>
-             <div class="box box4">
+            <div class="box box4">
                 <h2>Total Applications</h2>
                 <p>25</p>
             </div>
-        </div> 
+        </div>
+
+        <!-- Profile Settings Section -->
+        <div class="center-box" id="settingsContent">
+            <h2>Profile Settings</h2>
+            <button onclick="showChangePasswordForm()">Change Password</button>
+            <button onclick="logout()">Logout</button>
+
+            <div id="changePasswordForm" style="display: none;">
+                <h3>Change Password</h3>
+                <form action="" method="POST">
+                    <input type="password" name="new_password" placeholder="New Password" required><br>
+                    <input type="password" name="confirm_password" placeholder="Confirm Password" required><br>
+                    <button type="submit">Update Password</button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <script>
+        function showDashboard() {
+            document.getElementById('dashboardContent').style.display = 'grid';
+            document.getElementById('settingsContent').style.display = 'none';
+        }
+
+        function showSettings() {
+            document.getElementById('dashboardContent').style.display = 'none';
+            document.getElementById('settingsContent').style.display = 'block';
+        }
+
+        function showChangePasswordForm() {
+            document.getElementById('changePasswordForm').style.display = 'block';
+        }
+
+        function logout() {
+            window.location.href = '../login.php'; // Redirect to logout page
+        }
+    </script>
+<?php
+ include 'connection.php';
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+
+
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
+    // Validate that the new password matches the confirm password
+    if ($new_password === $confirm_password) {
+        // Password hash for security (You can adjust hashing based on your need)
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+               // session_start();
+        // $user_id = $_SESSION['user_id'];  // Replace with actual user ID logic
+
+        // Update query
+        // $sql = "UPDATE account_login SET account_password='$hashed_password' WHERE account_email= $user_id";
+
+        // if ($conn->query($sql) === TRUE) {
+        //     echo "<script>alert('Password updated successfully!');</script>";
+        // } else {
+        //     echo "Error updating password: " . $conn->error;
+        // }
+    } else {
+        echo "<script>alert('Passwords do not match!');</script>";
+    }
+
+}
+$conn->close();
+?>
 </body>
 </html>

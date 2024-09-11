@@ -1,5 +1,3 @@
-<html>
-    <body>
     <?php   
         $servername = "localhost";
         $username = "root";
@@ -14,5 +12,3 @@
             die("Connection failed: " . mysqli_connect_error());
         }
     ?>
-</body>
-</html>
