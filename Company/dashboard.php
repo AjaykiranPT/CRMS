@@ -1,264 +1,401 @@
+<?php
+include "connection.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Company Dashboard</title>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #222; /* Dark background */
-            display: flex;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: #333;
-            padding: 20px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
-            position: fixed;
-            height: 100vh;
-        }
-
-        .sidebar h2 {
-            color: #00aaff;
-            font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            margin-bottom: 15px;
-        }
-
-        .sidebar ul li a {
-            color: #ccc;
-            text-decoration: none;
-            font-size: 1.2em;
-            transition: color 0.3s ease;
-        }
-
-        .sidebar ul li a:hover {
-            color: #00aaff;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            color: aliceblue;
+            background-color: black;
         }
 
         .main-container {
-            margin-left: 270px; /* Adjusted to account for the sidebar */
-            padding: 20px;
-            background-color: #333;
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            width: calc(100% - 290px); /* Adjusting width considering sidebar */
-            color: #ccc; /* Default text color */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
         }
 
-        .dashboard-header {
+        .header {
+            display: flex;
+            height: 60px;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 50px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2f5fff;
+            text-decoration: none;
+        }
+
+        .container {
+            padding: 4rem;
+            width: 95%;
+            height: calc(100vh - 60px); /* Ensure it fills remaining space */
+            margin: 15px;
+            margin-top: 50px;
+            border-radius: 10px 10px 0 0;
+            background: #0d0d0d;
             text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .dashboard-header h1 {
-            font-size: 2.5em;
-            color: #00aaff;
-        }
-
-        .dashboard-content {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 equal columns */
-            grid-template-rows: auto auto; /* 2 rows */
-            gap: 20px; /* Spacing between boxes */
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            row-gap: 0px;
         }
 
-        .box {
-            background-color: #444;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            text-align: center;
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 100vh;
+            padding: 30px;
+            background-color: #0d0d0d;
+            border-right: 1px solid black;
+            transform: translateX(-100%); /* Initially hidden */
             transition: transform 0.3s ease;
+            z-index: 10;
         }
 
-        .box:hover {
-            transform: translateY(-5px);
+        .sidebar.visible {
+            transform: translateX(0); /* Show when visible */
         }
 
-        .box h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-            color: #00aaff;
+        .sidebar .close {
+            display: flex;
+            height: 70px;
+            width: 100%;
+            align-items: center;
         }
 
-        .box p {
+        .sidebar .close i {
+            font-size: 2em;
+            position: absolute;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        .sidebar .bar {
+            padding: 12px;
+            margin-top: 19px;
+            border: 1px solid rgb(47, 95, 255);
+            border-radius: 30px;
+        }
+        .sidebar .current {
+            padding: 12px;
+            margin-top: 19px;
+            border-radius: 30px;
+            color:white;
+            background-color:rgb(47, 95, 255);
+        }
+        .sidebar .bar:hover{
+            border: 1px solid white;
+            color: white;
+        }
+        .sidebar .bar a {
+            color: rgb(47, 95, 255);
+            text-decoration: none;
             font-size: 1.2em;
-            color: #ccc;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .sidebar .current a{
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.3s ease;
         }
 
-        .box1 {
-            background-color: #005f8b;
-        }
-
-        .box2 {
-            background-color: #004466;
-        }
-
-        .box3 {
-            background-color: #00334d;
-        }
-
-        .box4 {
-            background-color: #002235;
-        }
-
-        /* Profile Settings Styling */
-        .center-box {
-            background-color: #1e90ff; /* Blue background */
-            padding: 20px;
+        .feature {
+            height: 150px;
+            border: 1px solid rgb(47, 95, 255);
             border-radius: 10px;
             width: 100%;
-            max-width: 400px;
-            text-align: center;
-            margin: 20px auto;
-            display: none; /* Hidden by default */
-        }
-
-        button {
-            background-color: #000; /* Black background */
-            color: #fff; /* White text */
-            border: 2px solid #1e90ff; /* Blue border */
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 10px 0;
-            transition: background-color 0.3s ease;
-            width: 100%;
-            border-radius: 4px;
-        }
-
-        button:hover {
-            background-color: #1e90ff; /* Blue on hover */
-            color: #000; /* Black text on hover */
-        }
-
-        input[type="password"] {
-            width: 100%;
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            background-color: #1a1a1a;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             padding: 10px;
-            margin: 10px 0;
-            border: 2px solid #000; /* Black border */
-            border-radius: 4px;
-            background-color: #333; /* Dark input background */
-            color: #fff; /* White text */
+            cursor: pointer;
+        }
+        .feature:hover {
+            transform: scale(1.02); /* Slight zoom on hover */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+        }
+        .feature h2 {
+            font-size: 1.2rem;
+            color: #2f5fff;
+            margin-bottom: 10px; /* Space between the heading and the number */
+            font-weight: normal;
+            text-transform: capitalize;
+            text-align: center;
+        }
+
+        .feature p {
+            font-size: 3rem;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.2;
+            text-align: center;
+        }
+            
+                /* Profile container to hold the profile icon and dropdown */
+        .profile-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Hidden by default */
+        .profile-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%; /* Position below the icon */
+            background-color: #0d0d0d;
+            border: 1px solid rgb(47, 95, 255);
+            border-radius: 10px;
+            z-index: 1000;
+            padding: 10px;
+            width: 150px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Links inside the profile menu */
+        .profile-menu a {
+            display: block;
+            padding: 8px 15px;
+            color: rgb(47, 95, 255);
+            text-decoration: none;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+            border-radius: 5px;
+        }
+
+        .profile-menu a:hover {
+            background-color: rgba(47, 95, 255, 0.1);
+            color: white;
+        }
+
+        /* Show profile menu when active */
+        .profile-menu.active {
+            display: block;
+        }
+
+
+        .menu-btn {
+            background-color: transparent;
+            outline: none;
+            border: none;
+        }
+
+        #menu {
+            font-size: 2em;
+            color: #6b6464;
+        }
+        #profile{
+            font-size: 1.5em;
+            color: #6b6464;
+        }
+        
+        
+        /* Responsive CSS */
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 30px;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                width: 100%;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.visible {
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            #menu {
+                font-size: 1.5em;
+            }
+
+            .container {
+                padding: 2rem 0;
+            }
         }
 
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Menu</h2>
-        <ul>
-            <li><a href="dashboard.php">Dashboard</a></li>
-            <li><a href="application.php">Applications</a></li>
-            <li><a href="postVacancy.php">Post Vacancy</a></li>
-            <li><a href="#" onclick="showSettings()">Settings</a></li> <!-- Link to settings -->
-            <li><a href="#">Report</a></li>
-        </ul>
+    <div class="sidebar" id="sidebar">
+        <div class="close">
+            <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
+        </div>
+        <div class="bar current">
+            <a href="dashboard.php" >Dashboard</a>
+        </div>
+        <div class="bar">
+            <a href="manageCompany.php">Manage Company</a>
+        </div>
+        <div class="bar">
+            <a href="manageStudent.php">Manage Users</a>
+        </div>
+        <div class="bar">
+            <a href="#">Profile</a>
+        </div>
     </div>
-    
-    <div class="main-container">
-        <div class="dashboard-header">
-            <h1>Company Dashboard</h1>
-        </div>
-        <div class="dashboard-content" id="dashboardContent">
-            <div class="box box1">
-                <h2>Total Applications</h2>
-                <p>150</p>
-            </div>
-            <div class="box box2">
-                <h2>Today Received</h2>
-                <p>85</p>
-            </div>
-            <div class="box box3">
-                <h2>Applications Selected</h2>
-                <p>40</p>
-            </div>
-            <div class="box box4">
-                <h2>Application Rejected</h2>
-                <p>35</p>
-            </div>
-        </div>
-        
-        <!-- Profile Settings Section -->
-        <div class="center-box" id="settingsContent">
-            <h2>Profile Settings</h2>
-            <button onclick="showChangePasswordForm()">Change Password</button>
-            <button onclick="logout()">Logout</button>
 
-            <div id="changePasswordForm" style="display: none;">
-                <h3>Change Password</h3>
-                <form action="" method="POST">
-                    <input type="password" name="new_password" placeholder="New Password" required><br>
-                    <input type="password" name="confirm_password" placeholder="Confirm Password" required><br>
-                    <button type="submit">Update Password</button>
-                </form>
+    <div class="main-container">
+    <div class="header">
+    <button class="menu-btn" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars" id="menu"></i>
+    </button>
+    <a href="#" class="logo">Campus Recruit</a>
+    <div class="profile-container">
+        <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
+        <div class="profile-menu" id="profileMenu">
+            <a href="#">Profile</a>
+            <a href="#">Logout</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+           
+            <div class="feature" onclick="window.location.href = 'Application.php'">
+            <h2>Total Applications</h2>
+            <p>
+                <?php
+                $stmt = $conn->prepare("SELECT COUNT(*) as total_applications FROM application");
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                echo $row['total_applications'];
+                $stmt->close();
+                ?>
+            </p>
+            </div>
+            
+            <div class="feature" onclick="window.location.href = 'Application.php'">
+            <h2>Today's Applications</h2>
+            <p>
+                <?php
+                $today = date("Y-m-d");
+                $stmt = $conn->prepare("SELECT COUNT(*) as today_applications FROM application WHERE application_date = ?");
+                $stmt->bind_param("s", $today);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                echo $row['today_applications'];
+                $stmt->close();
+                ?>
+            </p>
+            </div>
+           
+            <div class="feature" onclick="window.location.href = 'Application.php'">
+            <h2>Approved Applications</h2>
+            <p>
+                <?php
+                $status = 'approved';
+                $stmt = $conn->prepare("SELECT COUNT(*) as approved_applications FROM application WHERE appliaction_status = ?");
+                $stmt->bind_param("s", $status);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                echo $row['approved_applications'];
+                $stmt->close();
+                ?>
+            </p>
+            </div>
+          
+            <div class="feature" onclick="window.location.href = 'Application.php'">
+            <h2>Rejected Applications</h2>
+            <p>
+                <?php
+                $status = 'rejected';
+                $stmt = $conn->prepare("SELECT COUNT(*) as rejected_applications FROM application WHERE appliaction_status = ?");
+                $stmt->bind_param("s", $status);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $row = $result->fetch_assoc();
+                echo $row['rejected_applications'];
+                $stmt->close();
+                ?>
+            </p>
             </div>
         </div>
     </div>
 
     <script>
-        function showDashboard() {
-            document.getElementById('dashboardContent').style.display = 'grid';
-            document.getElementById('settingsContent').style.display = 'none';
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('visible');
+        }
+        
+        function toggleProfileMenu() {
+            const profileMenu = document.getElementById('profileMenu');
+            profileMenu.classList.toggle('active');
         }
 
-        function showSettings() {
-            document.getElementById('dashboardContent').style.display = 'none';
-            document.getElementById('settingsContent').style.display = 'block';
-        }
-
-        function showChangePasswordForm() {
-            document.getElementById('changePasswordForm').style.display = 'block';
-        }
-
-        function logout() {
-            window.location.href = '../login.php'; // Redirect to login or logout page
+        // Close the profile menu if clicked outside
+        window.onclick = function(event) {
+            if (!event.target.matches('#profile')) {
+                const dropdowns = document.getElementsByClassName("profile-menu");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    const openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('active')) {
+                        openDropdown.classList.remove('active');
+                    }
+                }
+            }
         }
     </script>
-    
-    <?php
-    include 'connection.php';
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-        $new_password = $_POST['new_password'];
-        $confirm_password = $_POST['confirm_password'];
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-
-        if ($new_password === $confirm_password) {
-            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-
-            session_start();
-            $user_id = $_SESSION['user_id']; // Ensure this is set
-
-            $sql = "UPDATE account_login SET account_password='$hashed_password' WHERE account_email='$user_id'";
-
-            if ($conn->query($sql) === TRUE) {
-                echo "<script>alert('Password updated successfully!');</script>";
-            } else {
-                echo "Error updating password: " . $conn->error;
-            }
-        } else {
-            echo "<script>alert('Passwords do not match!');</script>";
-        }
-    }
-
-    $conn->close();
-    ?>
 </body>
 </html>

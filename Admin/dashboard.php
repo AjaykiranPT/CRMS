@@ -1,44 +1,12 @@
 <?php
-    include "connection.php";
-
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $company_id = $_POST['company_id'];
-        $action = $_POST['action'];
-    
-        if ($action === 'approve') {
-            $stmt = $conn->prepare("UPDATE company_details SET approval = 'approved' WHERE Company_id = ?");
-            $stmt->bind_param("i", $company_id);
-        } elseif ($action === 'reject') {
-            $stmt = $conn->prepare("UPDATE company_details SET approval = 'rejected' WHERE Company_id = ?");
-            $stmt->bind_param("i", $company_id);
-        } elseif ($action === 'remove_approval') {
-            $stmt = $conn->prepare("UPDATE company_details SET approval = 'waiting' WHERE Company_id = ?");
-            $stmt->bind_param("i", $company_id);
-        }
-    
-        $stmt->execute();
-        $stmt->close();
-    }
-    
-    // Fetch company data
-    $approved_companies_stmt = $conn->prepare("SELECT * FROM company_details WHERE approval = 'approved'");
-    $approved_companies_stmt->execute();
-    $approved_companies_result = $approved_companies_stmt->get_result();
-    
-    $rejected_companies_stmt = $conn->prepare("SELECT * FROM company_details WHERE approval = 'rejected'");
-    $rejected_companies_stmt->execute();
-    $rejected_companies_result = $rejected_companies_stmt->get_result();
-    
-    $waiting_companies_stmt = $conn->prepare("SELECT * FROM company_details WHERE approval = 'waiting'");
-    $waiting_companies_stmt->execute();
-    $waiting_companies_result = $waiting_companies_stmt->get_result();
+include "connection.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Managing Company</title>
+    <title>Admin Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
@@ -92,7 +60,7 @@
             background: #0d0d0d;
             text-align: center;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             row-gap: 0px;
         }
@@ -135,6 +103,13 @@
             border: 1px solid rgb(47, 95, 255);
             border-radius: 30px;
         }
+        .sidebar .current {
+            padding: 12px;
+            margin-top: 19px;
+            border-radius: 30px;
+            color:white;
+            background-color:rgb(47, 95, 255);
+        }
         .sidebar .bar:hover{
             border: 1px solid white;
             color: white;
@@ -146,13 +121,6 @@
             cursor: pointer;
             transition: color 0.3s ease;
         }
-        .sidebar .current {
-            padding: 12px;
-            margin-top: 19px;
-            border-radius: 30px;
-            color:white;
-            background-color:rgb(47, 95, 255);
-        }
         .sidebar .current a{
             color: white;
             text-decoration: none;
@@ -160,7 +128,43 @@
             cursor: pointer;
             transition: color 0.3s ease;
         }
-        
+
+        .feature {
+            height: 150px;
+            border: 1px solid rgb(47, 95, 255);
+            border-radius: 10px;
+            width: 100%;
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            background-color: #1a1a1a;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .feature:hover {
+            transform: scale(1.02); /* Slight zoom on hover */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+        }
+        .feature h2 {
+            font-size: 1.2rem;
+            color: #2f5fff;
+            margin-bottom: 10px; /* Space between the heading and the number */
+            font-weight: normal;
+            text-transform: capitalize;
+            text-align: center;
+        }
+
+        .feature p {
+            font-size: 3rem;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.2;
+            text-align: center;
+        }
             
                 /* Profile container to hold the profile icon and dropdown */
         .profile-container {
@@ -219,64 +223,8 @@
             font-size: 1.5em;
             color: #6b6464;
         }
-        /* Container for each list of companies */
-.company-list {
-    background-color: #1e1e1e;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 10px;
-    border: 1px solid #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.company-list h2 {
-    color: #2f5fff;
-    margin-bottom: 15px;
-}
-
-/* Individual company item styling */
-.company {
-    background-color: #2d2d2d;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.company span {
-    font-size: 1.1em;
-    color: #ffffff;
-}
-
-.company-actions form {
-    display: inline;
-}
-
-.company-actions button {
-    background-color: #2f5fff;
-    border: none;
-    color: #ffffff;
-    padding: 5px 10px;
-    margin-left: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.company-actions button:hover {
-    background-color: #1a3a7f;
-}
-
-/* Specific styling for rejected companies */
-.company-actions span {
-    color: #ff5c5c;
-    font-weight: bold;
-}
-
-
+        
+        
         /* Responsive CSS */
         @media (max-width: 1200px) {
             .container {
@@ -322,6 +270,7 @@
                 padding: 2rem 0;
             }
         }
+
     </style>
 </head>
 <body>
@@ -329,14 +278,14 @@
         <div class="close">
             <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
         </div>
-        <div class="bar">
+        <div class="bar current">
             <a href="dashboard.php" >Dashboard</a>
         </div>
-        <div class="bar current">
+        <div class="bar">
             <a href="manageCompany.php">Manage Company</a>
         </div>
         <div class="bar">
-            <a href="manageStudent.php">Manage Student</a>
+            <a href="manageStudent.php">Manage Users</a>
         </div>
         <div class="bar">
             <a href="#">Profile</a>
@@ -344,72 +293,108 @@
     </div>
 
     <div class="main-container">
-        <div class="header">
-            <button class="menu-btn" onclick="toggleSidebar()">
-                <i class="fa-solid fa-bars" id="menu"></i>
-            </button>
-            <a href="#" class="logo">Campus Recruit</a>
-            <div class="profile-container">
-                <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
-                <div class="profile-menu" id="profileMenu">
-                    <a href="#">Profile</a>
-                    <a href="#">Logout</a>
-                </div>
-            </div>
+    <div class="header">
+    <button class="menu-btn" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars" id="menu"></i>
+    </button>
+    <a href="#" class="logo">Campus Recruit</a>
+    <div class="profile-container">
+        <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
+        <div class="profile-menu" id="profileMenu">
+            <a href="#">Profile</a>
+            <a href="#">Logout</a>
         </div>
+    </div>
+</div>
 
-
-        <div class="container">
-            <!-- Approved Companies -->
-            <div class="company-list">
-                <h2>Approved Companies</h2>
-                <?php while ($company = $approved_companies_result->fetch_assoc()): ?>
-                    <div class="company">
-                        <span><?php echo htmlspecialchars($company['Company_name']); ?></span>
-                        <div class="company-actions">
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="company_id" value="<?php echo htmlspecialchars($company['Company_id']); ?>">
-                                <input type="hidden" name="action" value="remove_approval">
-                                <button type="submit">Remove Approval</button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
+<div class="container">
+            <!-- Registered Company Feature -->
+            <div class="feature" onclick="window.location.href = 'manageCompany.php'">
+                <h2>Registered Company</h2>
+                <p>
+                    <?php
+                    $registeredCompanyQuery = "SELECT COUNT(*) as registered_companies FROM company_details WHERE approval = 'approved'";
+                    $registeredCompanyResult = $conn->query($registeredCompanyQuery)->fetch_assoc();
+                    echo $registeredCompanyResult['registered_companies'];
+                    ?>
+                </p>
             </div>
-
-            <!-- Waiting Companies -->
-            <div class="company-list">
-                <h2>Waiting Companies</h2>
-                <?php while ($company = $waiting_companies_result->fetch_assoc()): ?>
-                    <div class="company">
-                        <span><?php echo htmlspecialchars($company['Company_name']); ?></span>
-                        <div class="company-actions">
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="company_id" value="<?php echo htmlspecialchars($company['Company_id']); ?>">
-                                <input type="hidden" name="action" value="approve">
-                                <button type="submit">Approve</button>
-                            </form>
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="company_id" value="<?php echo htmlspecialchars($company['Company_id']); ?>">
-                                <input type="hidden" name="action" value="reject">
-                                <button type="submit">Reject</button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
+            <!-- Rejected Company Feature -->
+            <div class="feature" onclick="window.location.href = 'manageCompany.php'">
+                <h2>Rejected Company</h2>
+                <p>
+                    <?php
+                    $rejectedCompanyQuery = "SELECT COUNT(*) as rejected_companies FROM company_details WHERE approval = 'rejected'";
+                    $rejectedCompanyResult = $conn->query($rejectedCompanyQuery)->fetch_assoc();
+                    echo $rejectedCompanyResult['rejected_companies'];
+                    ?>
+                </p>
             </div>
-
-            <!-- Rejected Companies -->
-            <div class="company-list">
-                <h2>Rejected Companies</h2>
-                <?php while ($company = $rejected_companies_result->fetch_assoc()): ?>
-                    <div class="company">
-                        <span><?php echo htmlspecialchars($company['Company_name']); ?></span>
-                        <div class="company-actions">
-                            <span>Rejected</span>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
+            <!-- New Company Feature -->
+            <div class="feature" onclick="window.location.href = 'manageCompany.php'">
+                <h2>New Company</h2>
+                <p>
+                    <?php
+                    $newCompanyQuery = "SELECT COUNT(*) as new_companies FROM company_details WHERE approval = 'waiting'";
+                    $newCompanyResult = $conn->query($newCompanyQuery)->fetch_assoc();
+                    echo $newCompanyResult['new_companies'];
+                    ?>
+                </p>
+            </div>
+            <!-- Registered Students Feature -->
+            <div class="feature" onclick="window.location.href = 'manageStudent.php'">
+                <h2>Registered Students</h2>
+                <p>
+                    <?php
+                    $registeredStudentQuery = "SELECT COUNT(*) as registered_students FROM student_details WHERE approval = 'approved'";
+                    $registeredStudentResult = $conn->query($registeredStudentQuery)->fetch_assoc();
+                    echo $registeredStudentResult['registered_students'];
+                    ?>
+                </p>
+            </div>
+            <!-- Rejected Students Feature -->
+            <div class="feature" onclick="window.location.href = 'manageStudent.php'">
+                <h2>Rejected Students</h2>
+                <p>
+                    <?php
+                    $rejectedStudentQuery = "SELECT COUNT(*) as rejected_students FROM student_details WHERE approval = 'rejected'";
+                    $rejectedStudentResult = $conn->query($rejectedStudentQuery)->fetch_assoc();
+                    echo $rejectedStudentResult['rejected_students'];
+                    ?>
+                </p>
+            </div>
+            <!-- New Students Feature -->
+            <div class="feature" onclick="window.location.href = 'manageStudent.php'">
+                <h2>New Students</h2>
+                <p>
+                    <?php
+                    $newStudentQuery = "SELECT COUNT(*) as new_students FROM student_details WHERE approval = 'waiting'";
+                    $newStudentResult = $conn->query($newStudentQuery)->fetch_assoc();
+                    echo $newStudentResult['new_students'];
+                    ?>
+                </p>
+            </div>
+            <!-- Job Posted Feature -->
+            <div class="feature">
+                <h2>Job Posted</h2>
+                <p>
+                    <?php
+                    $jobQuery = "SELECT COUNT(*) as total_jobs FROM job_posting";
+                    $jobResult = $conn->query($jobQuery)->fetch_assoc();
+                    echo $jobResult['total_jobs'];
+                    ?>
+                </p>
+            </div>
+            <!-- Total Applications Feature -->
+            <div class="feature">
+                <h2>Total Applications</h2>
+                <p>
+                    <?php
+                    $applicationQuery = "SELECT COUNT(*) as total_applications FROM application";
+                    $applicationResult = $conn->query($applicationQuery)->fetch_assoc();
+                    echo $applicationResult['total_applications'];
+                    ?>
+                </p>
             </div>
         </div>
     </div>

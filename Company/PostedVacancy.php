@@ -356,49 +356,7 @@
     </div>
 
     <div class="container">
-        <div class="form-container">
-            <h2>Post a Job Vacancy</h2>
-            <form method="post" onsubmit="return company_validateForm()">
-                <div class="input-layer">
-                    <input type="text" id="jobtitle" name="jobtitle" placeholder=" ">
-                    <label for="jobtitle">Job title</label>
-                </div>
-                <div class="input-layer">
-                    <textarea id="description" name="description" placeholder=" "></textarea>
-                    <label for="description">Job Description:</label>
-                </div>
-                <div class="input-layer">
-                    <input type="text" id="location" name="location" placeholder=" " >
-                    <label for="location">Location</label>
-                </div>
-                <div class="input-layer">
-                    <input type="date" id="deadline" class="dinput" name="deadline">
-                    <label for="deadline" class="dlabel">Deadline</label>
-                </div>
-                <div class="input-layer">
-                    <select name="course" id="course" class="course">
-                        <option value="" selected disabled>Select Course</option>
-                        <option value="Bachelor of Computer Applications">Bachelor of Computer Applications</option>
-                        <option value="Bachelor of Commerce">Bachelor of Commerce</option>
-                        <option value="Bachelor of Business Administration">Bachelor of Business Administration</option>
-                        <option value="Bachelor of Social Work">Bachelor of Social Work</option>
-                        <option value="B.Sc Mathematics">B.Sc Mathematics</option>
-                        <option value="B.Sc Physics">B.Sc Physics</option>
-                        <option value="B.Sc Chemistry">B.Sc Chemistry</option>
-                        <option value="BA History">BA History</option>
-                    </select>
-                </div>
-                <div class="input-layer">
-                    <select name="jobtype" id="jobtype" class="jobtype">
-                        <option value="" selected disabled>Job type</option>
-                        <option value="fulltime">Full time</option>
-                        <option value="parttime">Part time</option>
-                    </select>
-                </div>
-                <div class="input-layer">
-                    <input type="submit" value="Submit">
-                </div>
-            </form>
+        
         </div>  
     </div>
 

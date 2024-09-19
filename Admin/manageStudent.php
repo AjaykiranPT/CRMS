@@ -1,44 +1,44 @@
 <?php
-    include "connection.php";
+include "connection.php";
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $company_id = $_POST['company_id'];
-        $action = $_POST['action'];
-    
-        if ($action === 'approve') {
-            $stmt = $conn->prepare("UPDATE company_details SET approval = 'approved' WHERE Company_id = ?");
-            $stmt->bind_param("i", $company_id);
-        } elseif ($action === 'reject') {
-            $stmt = $conn->prepare("UPDATE company_details SET approval = 'rejected' WHERE Company_id = ?");
-            $stmt->bind_param("i", $company_id);
-        } elseif ($action === 'remove_approval') {
-            $stmt = $conn->prepare("UPDATE company_details SET approval = 'waiting' WHERE Company_id = ?");
-            $stmt->bind_param("i", $company_id);
-        }
-    
-        $stmt->execute();
-        $stmt->close();
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $student_id = $_POST['student_id'];
+    $action = $_POST['action'];
+
+    if ($action === 'approve') {
+        $stmt = $conn->prepare("UPDATE student_details SET approval = 'approved' WHERE student_id = ?");
+        $stmt->bind_param("i", $student_id);
+    } elseif ($action === 'reject') {
+        $stmt = $conn->prepare("UPDATE student_details SET approval = 'rejected' WHERE student_id = ?");
+        $stmt->bind_param("i", $student_id);
+    } elseif ($action === 'remove_approval') {
+        $stmt = $conn->prepare("UPDATE student_details SET approval = 'waiting' WHERE student_id = ?");
+        $stmt->bind_param("i", $student_id);
     }
-    
-    // Fetch company data
-    $approved_companies_stmt = $conn->prepare("SELECT * FROM company_details WHERE approval = 'approved'");
-    $approved_companies_stmt->execute();
-    $approved_companies_result = $approved_companies_stmt->get_result();
-    
-    $rejected_companies_stmt = $conn->prepare("SELECT * FROM company_details WHERE approval = 'rejected'");
-    $rejected_companies_stmt->execute();
-    $rejected_companies_result = $rejected_companies_stmt->get_result();
-    
-    $waiting_companies_stmt = $conn->prepare("SELECT * FROM company_details WHERE approval = 'waiting'");
-    $waiting_companies_stmt->execute();
-    $waiting_companies_result = $waiting_companies_stmt->get_result();
+
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Fetch student data
+$approved_students_stmt = $conn->prepare("SELECT * FROM student_details WHERE approval = 'approved'");
+$approved_students_stmt->execute();
+$approved_students_result = $approved_students_stmt->get_result();
+
+$rejected_students_stmt = $conn->prepare("SELECT * FROM student_details WHERE approval = 'rejected'");
+$rejected_students_stmt->execute();
+$rejected_students_result = $rejected_students_stmt->get_result();
+
+$waiting_students_stmt = $conn->prepare("SELECT * FROM student_details WHERE approval = 'waiting'");
+$waiting_students_stmt->execute();
+$waiting_students_result = $waiting_students_stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Managing Company</title>
+    <title>Managing Students</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
@@ -160,15 +160,11 @@
             cursor: pointer;
             transition: color 0.3s ease;
         }
-        
-            
-                /* Profile container to hold the profile icon and dropdown */
         .profile-container {
             position: relative;
             display: inline-block;
         }
 
-        /* Hidden by default */
         .profile-menu {
             display: none;
             position: absolute;
@@ -183,7 +179,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
         }
 
-        /* Links inside the profile menu */
         .profile-menu a {
             display: block;
             padding: 8px 15px;
@@ -199,11 +194,9 @@
             color: white;
         }
 
-        /* Show profile menu when active */
         .profile-menu.active {
             display: block;
         }
-
 
         .menu-btn {
             background-color: transparent;
@@ -219,65 +212,61 @@
             font-size: 1.5em;
             color: #6b6464;
         }
-        /* Container for each list of companies */
-.company-list {
-    background-color: #1e1e1e;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 10px;
-    border: 1px solid #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
 
-.company-list h2 {
-    color: #2f5fff;
-    margin-bottom: 15px;
-}
+        .student-list {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
 
-/* Individual company item styling */
-.company {
-    background-color: #2d2d2d;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+        .student-list h2 {
+            color: #2f5fff;
+            margin-bottom: 15px;
+        }
 
-.company span {
-    font-size: 1.1em;
-    color: #ffffff;
-}
+        .student {
+            background-color: #2d2d2d;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-.company-actions form {
-    display: inline;
-}
+        .student span {
+            font-size: 1.1em;
+            color: #ffffff;
+        }
 
-.company-actions button {
-    background-color: #2f5fff;
-    border: none;
-    color: #ffffff;
-    padding: 5px 10px;
-    margin-left: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        .student-actions form {
+            display: inline;
+        }
 
-.company-actions button:hover {
-    background-color: #1a3a7f;
-}
+        .student-actions button {
+            background-color: #2f5fff;
+            border: none;
+            color: #ffffff;
+            padding: 5px 10px;
+            margin-left: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-/* Specific styling for rejected companies */
-.company-actions span {
-    color: #ff5c5c;
-    font-weight: bold;
-}
+        .student-actions button:hover {
+            background-color: #1a3a7f;
+        }
 
+        .student-actions span {
+            color: #ff5c5c;
+            font-weight: bold;
+        }
 
-        /* Responsive CSS */
         @media (max-width: 1200px) {
             .container {
                 grid-template-columns: repeat(3, 1fr);
@@ -325,17 +314,17 @@
     </style>
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
+<div class="sidebar" id="sidebar">
         <div class="close">
             <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
         </div>
         <div class="bar">
             <a href="dashboard.php" >Dashboard</a>
         </div>
-        <div class="bar current">
+        <div class="bar">
             <a href="manageCompany.php">Manage Company</a>
         </div>
-        <div class="bar">
+        <div class="bar current">
             <a href="manageStudent.php">Manage Student</a>
         </div>
         <div class="bar">
@@ -358,17 +347,16 @@
             </div>
         </div>
 
-
         <div class="container">
-            <!-- Approved Companies -->
-            <div class="company-list">
-                <h2>Approved Companies</h2>
-                <?php while ($company = $approved_companies_result->fetch_assoc()): ?>
-                    <div class="company">
-                        <span><?php echo htmlspecialchars($company['Company_name']); ?></span>
-                        <div class="company-actions">
+            <!-- Approved Students -->
+            <div class="student-list">
+                <h2>Approved Students</h2>
+                <?php while ($student = $approved_students_result->fetch_assoc()): ?>
+                    <div class="student">
+                        <span><?php echo htmlspecialchars($student['First_name'])." ".htmlspecialchars($student['Last_name']); ?></span>
+                        <div class="student-actions">
                             <form method="POST" style="display:inline;">
-                                <input type="hidden" name="company_id" value="<?php echo htmlspecialchars($company['Company_id']); ?>">
+                                <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
                                 <input type="hidden" name="action" value="remove_approval">
                                 <button type="submit">Remove Approval</button>
                             </form>
@@ -377,20 +365,20 @@
                 <?php endwhile; ?>
             </div>
 
-            <!-- Waiting Companies -->
-            <div class="company-list">
-                <h2>Waiting Companies</h2>
-                <?php while ($company = $waiting_companies_result->fetch_assoc()): ?>
-                    <div class="company">
-                        <span><?php echo htmlspecialchars($company['Company_name']); ?></span>
-                        <div class="company-actions">
+            <!-- Waiting Students -->
+            <div class="student-list">
+                <h2>Waiting Students</h2>
+                <?php while ($student = $waiting_students_result->fetch_assoc()): ?>
+                    <div class="student">
+                        <span><?php echo htmlspecialchars($student['First_name'])." ".htmlspecialchars($student['Last_name']); ?></span>
+                        <div class="student-actions">
                             <form method="POST" style="display:inline;">
-                                <input type="hidden" name="company_id" value="<?php echo htmlspecialchars($company['Company_id']); ?>">
+                                <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
                                 <input type="hidden" name="action" value="approve">
                                 <button type="submit">Approve</button>
                             </form>
                             <form method="POST" style="display:inline;">
-                                <input type="hidden" name="company_id" value="<?php echo htmlspecialchars($company['Company_id']); ?>">
+                                <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student['student_id']); ?>">
                                 <input type="hidden" name="action" value="reject">
                                 <button type="submit">Reject</button>
                             </form>
@@ -399,13 +387,13 @@
                 <?php endwhile; ?>
             </div>
 
-            <!-- Rejected Companies -->
-            <div class="company-list">
-                <h2>Rejected Companies</h2>
-                <?php while ($company = $rejected_companies_result->fetch_assoc()): ?>
-                    <div class="company">
-                        <span><?php echo htmlspecialchars($company['Company_name']); ?></span>
-                        <div class="company-actions">
+            <!-- Rejected Students -->
+            <div class="student-list">
+                <h2>Rejected Students</h2>
+                <?php while ($student = $rejected_students_result->fetch_assoc()): ?>
+                    <div class="student">
+                        <span><?php echo htmlspecialchars($student['First_name'])." ".htmlspecialchars($student['Last_name']); ?></span>
+                        <div class="student-actions">
                             <span>Rejected</span>
                         </div>
                     </div>
