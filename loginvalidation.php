@@ -28,13 +28,13 @@
             // Verify the password
             if (password_verify($input_password, $stored_password) || $input_password===$stored_password) {
                 if($stored_type === 'admin'){
-                    header("location:Admin/admindashboard.php");
+                    header("location:Admin/dashboard.php");
                 }
                 elseif($stored_type === 'student'){
                     header("location:Student/index.php");
                 }
                 elseif($stored_type === 'company'){
-                    header("location:Company/Companydashboard.php");
+                    header("location:Company/dashboard.php");
                 }
                 else{
                     $error_message = urldecode('User not found');
