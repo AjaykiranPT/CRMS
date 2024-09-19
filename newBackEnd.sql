@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 11, 2024 at 09:00 AM
+-- Generation Time: Sep 19, 2024 at 03:41 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -38,11 +38,11 @@ CREATE TABLE `account_login` (
 --
 
 INSERT INTO `account_login` (`account_email`, `account_password`, `account_type`) VALUES
-('abinms@gmail.com', '$2y$10$0f6O3NJmxWxjfP9SgtHuHO408qQX3ItOcxqLesM.B8FPI095B1NrW', 'admin'),
-('ajaykiran1221@gmail.com', '$2y$10$pxtZSe0M7cMEzQPaMCvi/eu/Ve6tBH0bINk4kQ7T7IQGf/0KkoJT2', 'admin'),
-('rahul@gmail.com', '$2y$10$6yAN/Mri1oVfb37JFm9s2udsPNrdHLH7.OG7I.0pa2zHfv9LtCuyC', 'company'),
-('vini@gmail.com', '$2y$10$wQMKPjrqwCKp0tZXGv5wj.mDS0N1IJ8AlttnuZ.1vSnqa3yWqzPye', 'student'),
-('vipin@gmail.com', '$2y$10$ZusBSefBq.Oa9hvVViMntufrHTnH1zn7du03WOsEQiLmXDovy9oXa', 'company');
+('abinms@gmail.com', '$2y$10$ydDbNNADpBHIKFhxuiCJX.hCHhdW0l9tlXHxrUY7jlWPJH.Jyv.mK', 'admin'),
+('ajaykiran1221@gmail.com', '$2y$10$96Pt5YZPMec4qKlJ3HQRD.5ylegJc4GnzifL5VQQSnRjwQbR4H7RK', 'admin'),
+('rahul@gmail.com', '$2y$10$98G5Mnysrp6g5nr39WTXi.JmXErAFNUMKj8gmwuDTb.zQNSH6.HhW', 'company'),
+('vini@gmail.com', '$2y$10$OIwcjF/lpv1gJGAy5VfT7OTN2B82D2xv5UpFJabt8lcGhyqVDqLae', 'student'),
+('vipin@gmail.com', '$2y$10$igu4zSJQCQPcCY40FUvv/eoBqg9RBtH6b6LNpAis/xt7kf5jMfI0O', 'company');
 
 -- --------------------------------------------------------
 
@@ -72,20 +72,20 @@ INSERT INTO `admin_details` (`id`, `account_email`, `user_name`, `PhoneNum`) VAL
 --
 
 CREATE TABLE `application` (
-  `ApplicationID` int(11) NOT NULL,
-  `UserName` varchar(15) NOT NULL,
-  `JobID` varchar(10) NOT NULL,
-  `ApplicationDate` date NOT NULL,
-  `Status` varchar(10) NOT NULL
+  `application_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `company_id` int(11) NOT NULL,
+  `job_id` int(11) NOT NULL,
+  `application_date` date DEFAULT curdate(),
+  `appliaction_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `application`
 --
 
-INSERT INTO `application` (`ApplicationID`, `UserName`, `JobID`, `ApplicationDate`, `Status`) VALUES
-(10054, 'Abin M S', 'JOB2253', '2024-02-11', 'Applied'),
-(10023, 'Ajaykiran P T', 'JOB2253', '2024-02-12', 'Applied');
+INSERT INTO `application` (`application_id`, `student_id`, `company_id`, `job_id`, `application_date`, `appliaction_status`) VALUES
+(1000, 4, 30, 2, '2024-09-19', 'pending');
 
 -- --------------------------------------------------------
 
@@ -99,16 +99,17 @@ CREATE TABLE `company_details` (
   `Contact_person` varchar(255) NOT NULL,
   `account_email` varchar(255) NOT NULL,
   `PhoneNum` varchar(255) NOT NULL,
-  `date_of_joined` timestamp NOT NULL DEFAULT current_timestamp()
+  `date_of_joined` timestamp NOT NULL DEFAULT current_timestamp(),
+  `approval` enum('approved','waiting','rejected') DEFAULT 'waiting'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `company_details`
 --
 
-INSERT INTO `company_details` (`Company_id`, `Company_name`, `Contact_person`, `account_email`, `PhoneNum`, `date_of_joined`) VALUES
-(29, 'Hawkey Design', 'Rahul Rajendran', 'rahul@gmail.com', '9074697248', '2024-08-22 17:38:24'),
-(30, 'Gramitt', 'Vipindas', 'vipin@gmail.com', '7907604380', '2024-08-22 17:40:33');
+INSERT INTO `company_details` (`Company_id`, `Company_name`, `Contact_person`, `account_email`, `PhoneNum`, `date_of_joined`, `approval`) VALUES
+(29, 'Hawkey Design', 'Rahul Rajendran', 'rahul@gmail.com', '9074697248', '2024-08-22 17:38:24', 'approved'),
+(30, 'Gramitt', 'Vipindas', 'vipin@gmail.com', '7907604380', '2024-08-22 17:40:33', 'approved');
 
 -- --------------------------------------------------------
 
@@ -152,15 +153,16 @@ CREATE TABLE `student_details` (
   `Year_of_passing` varchar(4) NOT NULL,
   `PhoneNum` varchar(255) NOT NULL,
   `account_email` varchar(255) NOT NULL,
-  `date_of_joined` timestamp NOT NULL DEFAULT current_timestamp()
+  `date_of_joined` timestamp NOT NULL DEFAULT current_timestamp(),
+  `approval` enum('approved','waiting','rejected') DEFAULT 'waiting'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `student_details`
 --
 
-INSERT INTO `student_details` (`student_id`, `First_name`, `Last_name`, `Gender`, `City`, `Course`, `College`, `Year_of_passing`, `PhoneNum`, `account_email`, `date_of_joined`) VALUES
-(4, 'Vinitha', 'S', 'female', 'Pampanar', 'Bachelor of Computer Applications', 'Marian College Kuttikkanam (Autonomous)', '2025', '8590916553', 'vini@gmail.com', '2024-08-22 17:42:15');
+INSERT INTO `student_details` (`student_id`, `First_name`, `Last_name`, `Gender`, `City`, `Course`, `College`, `Year_of_passing`, `PhoneNum`, `account_email`, `date_of_joined`, `approval`) VALUES
+(4, 'Vinitha', 'S', 'female', 'Pampanar', 'Bachelor of Computer Applications', 'Marian College Kuttikkanam (Autonomous)', '2025', '8590916553', 'vini@gmail.com', '2024-08-22 17:42:15', 'approved');
 
 --
 -- Indexes for dumped tables
@@ -178,6 +180,15 @@ ALTER TABLE `account_login`
 ALTER TABLE `admin_details`
   ADD PRIMARY KEY (`id`),
   ADD KEY `account_email` (`account_email`);
+
+--
+-- Indexes for table `application`
+--
+ALTER TABLE `application`
+  ADD PRIMARY KEY (`application_id`),
+  ADD KEY `student_id` (`student_id`),
+  ADD KEY `company_id` (`company_id`),
+  ADD KEY `job_id` (`job_id`);
 
 --
 -- Indexes for table `company_details`
@@ -211,6 +222,12 @@ ALTER TABLE `admin_details`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `application`
+--
+ALTER TABLE `application`
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1001;
+
+--
 -- AUTO_INCREMENT for table `company_details`
 --
 ALTER TABLE `company_details`
@@ -239,6 +256,14 @@ ALTER TABLE `admin_details`
   ADD CONSTRAINT `admin_details_ibfk_1` FOREIGN KEY (`account_email`) REFERENCES `account_login` (`account_email`);
 
 --
+-- Constraints for table `application`
+--
+ALTER TABLE `application`
+  ADD CONSTRAINT `application_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `student_details` (`student_id`),
+  ADD CONSTRAINT `application_ibfk_2` FOREIGN KEY (`company_id`) REFERENCES `company_details` (`Company_id`),
+  ADD CONSTRAINT `application_ibfk_3` FOREIGN KEY (`job_id`) REFERENCES `job_posting` (`job_id`);
+
+--
 -- Constraints for table `company_details`
 --
 ALTER TABLE `company_details`
@@ -248,7 +273,7 @@ ALTER TABLE `company_details`
 -- Constraints for table `job_posting`
 --
 ALTER TABLE `job_posting`
-  ADD CONSTRAINT `job_posting_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `company_details` (`Company_id`);
+  ADD CONSTRAINT `job_posting_ibfk_1` FOREIGN KEY (`company_id`) REFERENCES `company_details` (`company_id`);
 
 --
 -- Constraints for table `student_details`
