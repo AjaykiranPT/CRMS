@@ -1,24 +1,16 @@
 <?php
     include "connection.php";
 
-    // Handle POST requests for job management actions (add, update, delete)
+    // Handle POST requests for job management actions (update, delete)
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['action'])) {
             $action = $_POST['action'];
-            if ($action === 'add') {
-                // Add a new job post
-                $job_title = $_POST['job_title'];
-                $job_description = $_POST['job_description'];
-                $stmt = $conn->prepare("INSERT INTO job_posting (job_title, job_description) VALUES (?, ?)");
-                $stmt->bind_param("ss", $job_title, $job_description);
-                $stmt->execute();
-                $stmt->close();
-            } elseif ($action === 'update') {
+            if ($action === 'update') {
                 // Update an existing job post
                 $job_id = $_POST['job_id'];
-                $job_title = $_POST['job_title'];
+                $job_title = $_POST['jobtitle'];
                 $job_description = $_POST['job_description'];
-                $stmt = $conn->prepare("UPDATE job_posting SET job_title = ?, job_description = ? WHERE job_id = ?");
+                $stmt = $conn->prepare("UPDATE job_posting SET jobtitle = ?, job_description = ? WHERE job_id = ?");
                 $stmt->bind_param("ssi", $job_title, $job_description, $job_id);
                 $stmt->execute();
                 $stmt->close();
@@ -45,7 +37,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Job Posts</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -79,14 +71,14 @@
             width: 80%;
             margin-top: 2rem;
         }
-        .job-list, .job-form {
+        .job-list {
             background-color: #2d2d2d;
             border-radius: 10px;
             padding: 20px;
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        .job-list h2, .job-form h2 {
+        .job-list h2 {
             color: #2f5fff;
             margin-bottom: 1rem;
         }
@@ -102,42 +94,64 @@
         .job span {
             color: #fff;
         }
-        .job-actions form {
+        .job-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .job-actions form {
+        display: flex;
+        flex-direction: column;
+        align-items: start;
+        background-color: #454545;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .job-actions input[type="text"],
+    .job-actions textarea {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #555;
+        border-radius: 5px;
+        background-color: #2d2d2d;
+        color: #fff;
+    }
+
+    .job-actions input[type="text"]:focus,
+    .job-actions textarea:focus {
+        border-color: #2f5fff;
+        outline: none;
+    }
+
+    .job-actions button {
+        background-color: #2f5fff;
+        border: none;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .job-actions button:hover {
+        background-color: #1a3a7f;
+    }
+
+        .post-vacancy-btn {
             display: inline-block;
-        }
-        .job-actions button {
-            background-color: #2f5fff;
-            border: none;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-        .job-actions button:hover {
-            background-color: #1a3a7f;
-        }
-        .job-form form {
-            display: flex;
-            flex-direction: column;
-        }
-        .job-form input[type="text"], .job-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 5px;
-        }
-        .job-form button {
-            width: 200px;
-            padding: 10px;
+            padding: 10px 20px;
             background-color: #2f5fff;
             color: #fff;
-            border: none;
+            text-decoration: none;
             border-radius: 5px;
+            margin-bottom: 20px;
             cursor: pointer;
         }
-        .job-form button:hover {
+        .post-vacancy-btn:hover {
             background-color: #1a3a7f;
         }
     </style>
@@ -149,16 +163,8 @@
         </div>
 
         <div class="container">
-            <!-- Post a New Job -->
-            <div class="job-form">
-                <h2>Post a New Job</h2>
-                <form method="POST">
-                    <input type="hidden" name="action" value="add">
-                    <input type="text" name="job_title" placeholder="Job Title" required>
-                    <textarea name="job_description" placeholder="Job Description" rows="5" required></textarea>
-                    <button type="submit">Post Job</button>
-                </form>
-            </div>
+            <!-- Redirect to Post Vacancy Page -->
+            <a href="post_vacancy.php" class="post-vacancy-btn">Post a New Vacancy</a>
 
             <!-- Display All Jobs -->
             <div class="job-list">
@@ -166,7 +172,7 @@
                 <?php while ($job = $jobs_result->fetch_assoc()): ?>
                     <div class="job">
                         <div>
-                            <span><?php echo htmlspecialchars($job['job_title']); ?></span>
+                            <span><?php echo htmlspecialchars($job['jobtitle']); ?></span>
                             <p><?php echo htmlspecialchars($job['job_description']); ?></p>
                         </div>
                         <div class="job-actions">
@@ -174,7 +180,7 @@
                             <form method="POST">
                                 <input type="hidden" name="job_id" value="<?php echo htmlspecialchars($job['job_id']); ?>">
                                 <input type="hidden" name="action" value="update">
-                                <input type="text" name="job_title" value="<?php echo htmlspecialchars($job['job_title']); ?>" required>
+                                <input type="text" name="jobtitle" value="<?php echo htmlspecialchars($job['jobtitle']); ?>" required>
                                 <textarea name="job_description" rows="3"><?php echo htmlspecialchars($job['job_description']); ?></textarea>
                                 <button type="submit">Update</button>
                             </form>

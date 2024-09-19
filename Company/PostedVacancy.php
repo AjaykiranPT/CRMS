@@ -1,3 +1,35 @@
+<?php
+    include "connection.php";
+
+    // Handle POST requests for job management actions (update, delete)
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_POST['action'])) {
+            $action = $_POST['action'];
+            if ($action === 'update') {
+                // Update an existing job post
+                $job_id = $_POST['job_id'];
+                $job_title = $_POST['jobtitle'];
+                $job_description = $_POST['job_description'];
+                $stmt = $conn->prepare("UPDATE job_posting SET jobtitle = ?, job_description = ? WHERE job_id = ?");
+                $stmt->bind_param("ssi", $job_title, $job_description, $job_id);
+                $stmt->execute();
+                $stmt->close();
+            } elseif ($action === 'delete') {
+                // Delete a job post
+                $job_id = $_POST['job_id'];
+                $stmt = $conn->prepare("DELETE FROM job_posting WHERE job_id = ?");
+                $stmt->bind_param("i", $job_id);
+                $stmt->execute();
+                $stmt->close();
+            }
+        }
+    }
+
+    // Fetch all posted jobs
+    $stmt = $conn->prepare("SELECT * FROM job_posting");
+    $stmt->execute();
+    $jobs_result = $stmt->get_result();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -173,148 +205,93 @@
             color: #6b6464;
         }
 
-        .form-container {
-            background-image: linear-gradient(50deg, rgb(19, 19, 19), #000000);
-            width: 60%;
-            min-width: 500px;
-            height: auto;
-            padding: 50px;
-            overflow: auto;
-            border: 1px solid rgb(47, 95, 255);
+        
+        .job-list {
+            background-color: #2d2d2d;
             border-radius: 10px;
-        }
-        .form-container::-webkit-scrollbar{
-            display: none;
-        }
-        .form-container h2 {
-            text-align: center;
-            color: lightblue;
-        }
-
-        .input-layer {
-            margin-bottom: 45px;
-            position: relative;
+            padding: 20px;
             width: 100%;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-
-        .input-layer label {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            color: #c0c0c0;
-            font-size: 17px;
-            pointer-events: none;
-            font-weight: 100;
-            transition: all 0.3s ease;
-            letter-spacing: .5px;
+        .job-list h2 {
+            color: #2f5fff;
+            margin-bottom: 1rem;
         }
-
-        .input-layer input[type='text'],
-        .input-layer textarea,
-        .input-layer input[type='date'] {
-            height: 30px;
-            width: 100%;
-            border: none;
-            outline: none;
-            border-bottom: 1px solid #c0c0c0;
-            font-size: 16px;
-            padding: 5px 0;
-            background: none;
-            color: #ffffff;
-        }
-
-        .input-layer input[type="text"]:focus ~ label,
-        .input-layer input[type="text"]:not(:placeholder-shown) ~ label,
-        .input-layer textarea:focus ~ label,
-        .input-layer textarea:not(:placeholder-shown) ~ label {
-            top: -20px;
-            left: 0;
-            color: #0059ff;
-            font-size: 14px;
-        }
-
-        .input-layer input:focus,
-        .input-layer textarea:focus {
-            border-bottom: #0059ff 2px solid;
-        }
-
-        .input-layer input[type=submit] {
-            color: rgb(47, 95, 255);
-            width: 100%;
-            height: 40px;
-            border: 1px solid rgb(47, 95, 255);
-            background-color: black;
-            font-weight: 600;
+        .job {
+            background-color: #3d3d3d;
+            padding: 15px;
             border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .job span {
+            color: #fff;
+        }
+        .job-actions {
+        display: flex;
+        gap: 10px;
+        width:50%;
+        align-items: center;
+    }
+
+    .job-actions form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #454545;
+        padding: 10px;
+        width: 100%;
+        border-radius: 5px;
+    }
+
+    .job-actions input[type="text"],
+    .job-actions textarea {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 8px;
+        border: 1px solid #555;
+        border-radius: 5px;
+        background-color: #2d2d2d;
+        color: #fff;
+    }
+
+    .job-actions input[type="text"]:focus,
+    .job-actions textarea:focus {
+        border-color: #2f5fff;
+        outline: none;
+    }
+
+    .job-actions button {
+        background-color: #2f5fff;
+        border: none;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .job-actions button:hover {
+        background-color: #1a3a7f;
+    }
+
+        .post-vacancy-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2f5fff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
             cursor: pointer;
         }
-
-        .input-layer input[type=submit]:hover {
-            color: white;
-            border-color: #ffffff;
+        .post-vacancy-btn:hover {
+            background-color: #1a3a7f;
         }
-
-        select {
-            height: 40px;
-            width: 100%;
-            background-color: #00000054;
-            outline: none;
-            color: #ffffff;
-            border-color: #d8d8d85b;
-            border-style: inset;
-            border-radius: 15px;
-            font-size: 15px;
-        }
-
-        .input-layer .dlabel {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            color: #c0c0c0;
-            font-size: 17px;
-            pointer-events: none;
-            font-weight: 100;
-            transition: all 0.3s ease;
-        }
-
-        .input-layer .dinput {
-            width: 100%;
-            height: 40px;
-        }
-
-        input[type="date"] {
-            padding: 10px;
-            font-size: 16px;
-            border: 2px solid #ccc;
-            border-radius: 5px;
-            background-color: #000;
-            color: #ffffff;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        input[type="date"]:focus {
-            border-color: #007bff;
-            outline: none;
-            background-color: #fff;
-        }
-
-        @media (max-width: 768px) {
-            .form-container {
-                width: 90%;
-            }
-
-            .sidebar {
-                width: 100%;
-            }
-
-            .sidebar.visible {
-                transform: translateX(0);
-            }
-        }
-
     </style>
 
 </head>
@@ -356,8 +333,34 @@
     </div>
 
     <div class="container">
-        
-        </div>  
+        <div class="job-list">
+            <h2>All Posted Jobs</h2>
+            <?php while ($job = $jobs_result->fetch_assoc()): ?>
+                <div class="job">
+                    <div>
+                        <span><?php echo htmlspecialchars($job['jobtitle']); ?></span>
+                        <p><?php echo htmlspecialchars($job['job_description']); ?></p>
+                    </div>
+                    <div class="job-actions">
+                            <!-- Edit Job Form -->
+                        <form method="POST">
+                            <input type="hidden" name="job_id" value="<?php echo htmlspecialchars($job['job_id']); ?>">
+                            <input type="hidden" name="action" value="update">
+                            <input type="text" name="jobtitle" value="<?php echo htmlspecialchars($job['jobtitle']); ?>" required>
+                            <textarea name="job_description" rows="3"><?php echo htmlspecialchars($job['job_description']); ?></textarea>
+                            <button type="submit">Update</button>
+                        </form>
+                            <!-- Delete Job Form -->
+                        <form method="POST">
+                            <input type="hidden" name="job_id" value="<?php echo htmlspecialchars($job['job_id']); ?>">
+                            <input type="hidden" name="action" value="delete">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+            <a href="postVacancy.php" class="post-vacancy-btn">ADD NEW VACANCIES</a>
+        </div>
     </div>
 
     <script>
