@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 19, 2024 at 03:41 PM
+-- Generation Time: Sep 20, 2024 at 05:03 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,7 +39,9 @@ CREATE TABLE `account_login` (
 
 INSERT INTO `account_login` (`account_email`, `account_password`, `account_type`) VALUES
 ('abinms@gmail.com', '$2y$10$ydDbNNADpBHIKFhxuiCJX.hCHhdW0l9tlXHxrUY7jlWPJH.Jyv.mK', 'admin'),
+('adhavan@gmail.com', '$2y$10$kL0mWa282Wz1diU1vvmrGOJNaqhfS2c8meWw7qYC8axWdKsrIxzcm', 'company'),
 ('ajaykiran1221@gmail.com', '$2y$10$96Pt5YZPMec4qKlJ3HQRD.5ylegJc4GnzifL5VQQSnRjwQbR4H7RK', 'admin'),
+('goutham@gmail.com', '$2y$10$OqM2Cq.KE/Zh0onTivGoCu70s/SCJ5cXHXrKuss0ZhDxKIPS9aEsy', 'student'),
 ('rahul@gmail.com', '$2y$10$98G5Mnysrp6g5nr39WTXi.JmXErAFNUMKj8gmwuDTb.zQNSH6.HhW', 'company'),
 ('vini@gmail.com', '$2y$10$OIwcjF/lpv1gJGAy5VfT7OTN2B82D2xv5UpFJabt8lcGhyqVDqLae', 'student'),
 ('vipin@gmail.com', '$2y$10$igu4zSJQCQPcCY40FUvv/eoBqg9RBtH6b6LNpAis/xt7kf5jMfI0O', 'company');
@@ -77,15 +79,17 @@ CREATE TABLE `application` (
   `company_id` int(11) NOT NULL,
   `job_id` int(11) NOT NULL,
   `application_date` date DEFAULT curdate(),
-  `appliaction_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending'
+  `application_status` enum('pending','approved','rejected') NOT NULL DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `application`
 --
 
-INSERT INTO `application` (`application_id`, `student_id`, `company_id`, `job_id`, `application_date`, `appliaction_status`) VALUES
-(1000, 4, 30, 2, '2024-09-19', 'pending');
+INSERT INTO `application` (`application_id`, `student_id`, `company_id`, `job_id`, `application_date`, `application_status`) VALUES
+(1010, 4, 29, 2, '2024-09-20', 'pending'),
+(1012, 5, 31, 4, '2024-09-20', 'approved'),
+(1013, 5, 30, 3, '2024-09-20', 'pending');
 
 -- --------------------------------------------------------
 
@@ -100,7 +104,7 @@ CREATE TABLE `company_details` (
   `account_email` varchar(255) NOT NULL,
   `PhoneNum` varchar(255) NOT NULL,
   `date_of_joined` timestamp NOT NULL DEFAULT current_timestamp(),
-  `approval` enum('approved','waiting','rejected') DEFAULT 'waiting'
+  `approval` enum('approved','pending','rejected') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -109,7 +113,8 @@ CREATE TABLE `company_details` (
 
 INSERT INTO `company_details` (`Company_id`, `Company_name`, `Contact_person`, `account_email`, `PhoneNum`, `date_of_joined`, `approval`) VALUES
 (29, 'Hawkey Design', 'Rahul Rajendran', 'rahul@gmail.com', '9074697248', '2024-08-22 17:38:24', 'approved'),
-(30, 'Gramitt', 'Vipindas', 'vipin@gmail.com', '7907604380', '2024-08-22 17:40:33', 'approved');
+(30, 'Gramitt', 'Vipindas', 'vipin@gmail.com', '7907604380', '2024-08-22 17:40:33', 'approved'),
+(31, 'NewDesign', 'Adhavan', 'adhavan@gmail.com', '7306879926', '2024-09-20 03:53:51', 'approved');
 
 -- --------------------------------------------------------
 
@@ -123,7 +128,7 @@ CREATE TABLE `job_posting` (
   `jobtitle` varchar(255) NOT NULL,
   `job_description` varchar(255) NOT NULL,
   `job_location` varchar(255) NOT NULL,
-  `posted_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `posted_date` date NOT NULL DEFAULT current_timestamp(),
   `deadline` date NOT NULL,
   `course` varchar(255) NOT NULL,
   `jobtype` enum('fulltime','parttime') DEFAULT NULL
@@ -134,7 +139,12 @@ CREATE TABLE `job_posting` (
 --
 
 INSERT INTO `job_posting` (`job_id`, `company_id`, `jobtitle`, `job_description`, `job_location`, `posted_date`, `deadline`, `course`, `jobtype`) VALUES
-(2, 29, 'testing', 'software testing', 'anakkara', '2024-09-04 06:04:13', '2024-09-27', 'bca', 'fulltime');
+(2, 29, 'testing', 'software testing', 'anakkara', '2024-09-04', '2024-10-07', 'Bachelor of Computer Applications', 'fulltime'),
+(3, 30, 'System Maintaining', 'System Maintaining for the network', 'Delhi', '2024-09-20', '2024-10-30', 'Bachelor of Business Administration', 'fulltime'),
+(4, 31, 'Business Administrator', 'Business Administrator', 'Chennai', '2024-09-20', '2025-04-05', 'Bachelor of Business Administration', 'parttime'),
+(5, 31, 'Game Developer', 'Developing 3D shooting Gaming', 'hydrabad', '2024-09-20', '2025-01-25', 'Bachelor of Computer Applications', 'parttime'),
+(6, 31, '3 D Dev', '3 D model Developer', 'TVM', '2024-09-20', '2026-02-22', 'Bachelor of Computer Applications', 'parttime'),
+(7, 31, 'Accounter', 'Business Accountancy', 'Idukki', '2024-09-20', '2025-02-22', 'Bachelor of Commerce', 'fulltime');
 
 -- --------------------------------------------------------
 
@@ -154,7 +164,7 @@ CREATE TABLE `student_details` (
   `PhoneNum` varchar(255) NOT NULL,
   `account_email` varchar(255) NOT NULL,
   `date_of_joined` timestamp NOT NULL DEFAULT current_timestamp(),
-  `approval` enum('approved','waiting','rejected') DEFAULT 'waiting'
+  `approval` enum('approved','pending','rejected') DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -162,7 +172,8 @@ CREATE TABLE `student_details` (
 --
 
 INSERT INTO `student_details` (`student_id`, `First_name`, `Last_name`, `Gender`, `City`, `Course`, `College`, `Year_of_passing`, `PhoneNum`, `account_email`, `date_of_joined`, `approval`) VALUES
-(4, 'Vinitha', 'S', 'female', 'Pampanar', 'Bachelor of Computer Applications', 'Marian College Kuttikkanam (Autonomous)', '2025', '8590916553', 'vini@gmail.com', '2024-08-22 17:42:15', 'approved');
+(4, 'Vinitha', 'S', 'female', 'Pampanar', 'Bachelor of Computer Applications', 'Marian College Kuttikkanam (Autonomous)', '2025', '8590916553', 'vini@gmail.com', '2024-08-22 17:42:15', 'approved'),
+(5, 'Goutham', 'R', 'male', 'Munnar', 'Bachelor of Business Administration', 'MIC', '2024', '9875462138', 'goutham@gmail.com', '2024-09-20 12:15:39', 'approved');
 
 --
 -- Indexes for dumped tables
@@ -225,25 +236,25 @@ ALTER TABLE `admin_details`
 -- AUTO_INCREMENT for table `application`
 --
 ALTER TABLE `application`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1001;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1014;
 
 --
 -- AUTO_INCREMENT for table `company_details`
 --
 ALTER TABLE `company_details`
-  MODIFY `Company_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `Company_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `job_posting`
 --
 ALTER TABLE `job_posting`
-  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `student_details`
 --
 ALTER TABLE `student_details`
-  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `student_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables
