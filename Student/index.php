@@ -9,7 +9,7 @@
     }
     
     $company_id=$_SESSION['student_id'];
-    
+
     $stmt = $conn->prepare("SELECT course FROM student_details WHERE student_id = ?");
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
@@ -392,7 +392,7 @@
                 <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
                 <div class="profile-menu" id="profileMenu">
                     <a href="#">Profile</a>
-                    <a href="#">Logout</a>
+                    <a href="../logout.php">Logout</a>
                 </div>
             </div>
     </div>

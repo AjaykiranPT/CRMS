@@ -282,7 +282,7 @@ $applications_result = $stmt->get_result();
                 <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
                 <div class="profile-menu" id="profileMenu">
                     <a href="#">Profile</a>
-                    <a href="#">Logout</a>
+                    <a href="../logout.php">Logout</a>
                 </div>
             </div>
     </div>
