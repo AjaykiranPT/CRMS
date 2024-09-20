@@ -1,5 +1,6 @@
 <?php
 session_start(); // Start the session at the beginning of the script
+ob_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -49,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Student login handling with approval check
             elseif ($stored_type === 'student') {
-                $student_stmt = $conn->prepare("SELECT student_id, approved FROM student_details WHERE account_email = ?");
+                $student_stmt = $conn->prepare("SELECT student_id, approval FROM student_details WHERE account_email = ?");
                 if ($student_stmt === false) {
                     die("Prepare failed: " . $conn->error);
                 }

@@ -12,16 +12,7 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['action'])) {
             $action = $_POST['action'];
-            if ($action === 'update') {
-                // Update an existing job post
-                $job_id = $_POST['job_id'];
-                $job_title = $_POST['jobtitle'];
-                $job_description = $_POST['job_description'];
-                $stmt = $conn->prepare("UPDATE job_posting SET jobtitle = ?, job_description = ? WHERE job_id = ?");
-                $stmt->bind_param("ssi", $job_title, $job_description, $job_id);
-                $stmt->execute();
-                $stmt->close();
-            } elseif ($action === 'delete') {
+            if ($action === 'delete') {
                 // Delete a job post
                 $job_id = $_POST['job_id'];
                 $stmt = $conn->prepare("DELETE FROM job_posting WHERE job_id = ?");
@@ -348,7 +339,7 @@
             <div class="profile-container">
                 <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
                 <div class="profile-menu" id="profileMenu">
-                    <a href="#">Profile</a>
+                    <a href="profile.php">Profile</a>
                     <a href="../logout.php">Logout</a>
                 </div>
             </div>
@@ -365,13 +356,6 @@
                     </div>
                     <div class="job-actions">
                             <!-- Edit Job Form -->
-                        <form method="POST">
-                            <input type="hidden" name="job_id" value="<?php echo htmlspecialchars($job['job_id']); ?>">
-                            <input type="hidden" name="action" value="update">
-                            <input type="text" name="jobtitle" value="<?php echo htmlspecialchars($job['jobtitle']); ?>" required>
-                            <textarea name="job_description" rows="3"><?php echo htmlspecialchars($job['job_description']); ?></textarea>
-                            <button type="submit">Update</button>
-                        </form>
                             <!-- Delete Job Form -->
                         <form method="POST">
                             <input type="hidden" name="job_id" value="<?php echo htmlspecialchars($job['job_id']); ?>">

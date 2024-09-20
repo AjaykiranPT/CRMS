@@ -1,4 +1,7 @@
 <?php
+ob_start();
+session_start();
+
     include "connection.php";  // Database connection file
 
     // Fetch the student's details (assuming student ID is 4)
@@ -8,7 +11,7 @@
         exit(); // Stop further script execution
     }
     
-    $company_id=$_SESSION['student_id'];
+    $student_id = $_SESSION['student_id'];
 
     $stmt = $conn->prepare("SELECT course FROM student_details WHERE student_id = ?");
     $stmt->bind_param("i", $student_id);
@@ -31,7 +34,7 @@
             $stmt->fetch();
             $stmt->close();
 
-            // Insert application into the application table
+            
             $application_date = date('Y-m-d');
             $stmt = $conn->prepare("INSERT INTO application (student_id, company_id, job_id, application_date) VALUES (?, ?, ?, ?)");
             $stmt->bind_param("iiis", $student_id, $company_id, $job_id, $application_date);
@@ -391,7 +394,7 @@
             <div class="profile-container">
                 <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
                 <div class="profile-menu" id="profileMenu">
-                    <a href="#">Profile</a>
+                    <a href="profile.php">Profile</a>
                     <a href="../logout.php">Logout</a>
                 </div>
             </div>

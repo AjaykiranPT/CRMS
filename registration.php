@@ -283,14 +283,14 @@
                 <div class="input-layer">
                     <select name="course" id="course" class="course">
                         <option value="" selected disabled>Select Course</option>
-                        <option value="bca">Bachelor of Computer Applications</option>
-                        <option value="bcom">Bachelor of Commerce</option>
-                        <option value="bba">Bachelor of Business Administration</option>
-                        <option value="bsw">Bachelor of Social Work</option>
-                        <option value="maths">B.Sc Mathematics</option>
-                        <option value="physics">B.Sc Physics</option>
-                        <option value="chemistry">B.Sc Chemistry</option>
-                        <option value="history">BA History</option>
+                        <option value="Bachelor of Computer Applications">Bachelor of Computer Applications</option>
+                        <option value="Bachelor of Commerce">Bachelor of Commerce</option>
+                        <option value="Bachelor of Business Administration">Bachelor of Business Administration</option>
+                        <option value="Bachelor of Social Work">Bachelor of Social Work</option>
+                        <option value="B.Sc Mathematics">B.Sc Mathematics</option>
+                        <option value="B.Sc Physics">B.Sc Physics</option>
+                        <option value="B.Sc Chemistry">B.Sc Chemistry</option>
+                        <option value="BA History">BA History</option>
                     </select>
                 </div>
                 <div class="input-layer">

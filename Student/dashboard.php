@@ -1,4 +1,6 @@
 <?php
+    ob_start();
+    session_start();
     include "connection.php";
     
     if (!isset($_SESSION['student_id'])) {
@@ -7,27 +9,28 @@
         exit(); // Stop further script execution
     }
     
-    $company_id=$_SESSION['student_id'];
+    $student_id = $_SESSION['student_id']; 
+
 
     // Fetch the student's course
     $stmt_get_account = $conn->prepare("SELECT Course FROM student_details WHERE student_id = ?");
     $stmt_get_account->bind_param('i', $student_id);
     $stmt_get_account->execute();
     
+
     // Bind result to variable
     $stmt_get_account->bind_result($course);
     $stmt_get_account->fetch();  // Fetch the result to use in the next queries
     $stmt_get_account->close();  // Close the statement to avoid sync issues
 
-    // Fetch New Jobs
-    $stmt_new_jobs = $conn->prepare("SELECT COUNT(*) as new_jobs FROM job_posting WHERE course = ?");
-    $stmt_new_jobs->bind_param('s', $course);
+  // Fetch New Jobs
+    $stmt_new_jobs = $conn->prepare("SELECT COUNT(*) as new_jobs FROM job_posting");
     $stmt_new_jobs->execute();
     $newJobsResult = $stmt_new_jobs->get_result()->fetch_assoc();
     $stmt_new_jobs->close();
 
     // Fetch Today Updated Jobs
-    $stmt_updated_jobs = $conn->prepare("SELECT COUNT(*) as updated_jobs FROM job_posting WHERE DATE(posted_date) = CURDATE()");
+    $stmt_updated_jobs = $conn->prepare("SELECT COUNT(*) as updated_jobs FROM job_posting WHERE DATE(posted_date) = CURDATE() ");
     $stmt_updated_jobs->execute();
     $updatedJobsResult = $stmt_updated_jobs->get_result()->fetch_assoc();
     $stmt_updated_jobs->close();
@@ -346,7 +349,7 @@
             <div class="profile-container">
                 <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i>
                 <div class="profile-menu" id="profileMenu">
-                    <a href="#">Profile</a>
+                    <a href="profile.php">Profile</a>
                     <a href="../logout.php">Logout</a>
                 </div>
             </div>
@@ -378,7 +381,7 @@
             </div>
 
             <!-- Applied Jobs Feature -->
-            <div class="feature" onclick="window.location.href = 'applied_jobs.php'">
+            <div class="feature" onclick="window.location.href = 'appliedjobs.php'">
                 <h2>Applied Jobs</h2>
                 <p>
                     <?php echo $appliedJobsResult['applied_jobs']; ?>

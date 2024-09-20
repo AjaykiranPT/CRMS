@@ -1,56 +1,63 @@
 <?php
-    session_start();
-    include "connection.php";
-    if (!isset($_SESSION['company_id'])) {
-        // Redirect to login page if not logged in
-        header("Location: ../login.php");
-        exit(); // Stop further script execution
+session_start();
+include "connection.php";
+
+if (!isset($_SESSION['company_id'])) {
+    header("Location: ../login.php");
+    exit();
+}
+
+$company_id = $_SESSION['company_id'];
+
+// Handle approval, rejection, and removal of approval
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $application_id = $_POST['application_id'];
+    $action = $_POST['action'];
+
+    if ($action === 'approve') {
+        $stmt = $conn->prepare("UPDATE application SET application_status = 'approved' WHERE application_id = ?");
+        $stmt->bind_param("i", $application_id);
+    } elseif ($action === 'reject') {
+        $stmt = $conn->prepare("UPDATE application SET application_status = 'rejected' WHERE application_id = ?");
+        $stmt->bind_param("i", $application_id);
+    } elseif ($action === 'remove_approval') {
+        $stmt = $conn->prepare("UPDATE application SET application_status = 'pending' WHERE application_id = ?");
+        $stmt->bind_param("i", $application_id);
     }
 
-    $company_id=$_SESSION['company_id'];
+    $stmt->execute();
+    $stmt->close();
+}
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $application_id = $_POST['application_id'];
-        $action = $_POST['action'];
-    
-        if ($action === 'approve') {
-            $stmt = $conn->prepare("UPDATE application SET application_status = 'approved' WHERE application_id = ?");
-            $stmt->bind_param("i", $application_id);
-        } elseif ($action === 'reject') {
-            $stmt = $conn->prepare("UPDATE application SET application_status = 'rejected' WHERE application_id = ?");
-            $stmt->bind_param("i", $application_id);
-        } elseif ($action === 'remove_approval') {
-            $stmt = $conn->prepare("UPDATE application SET application_status = 'pending' WHERE application_id = ?");
-            $stmt->bind_param("i", $application_id);
-        }
-    
-        $stmt->execute();
-        $stmt->close();
-    }
-    
-    // Fetch company data
-    $approved_application_stmt = $conn->prepare("SELECT * FROM application WHERE application_status = 'approved' AND Company_id=?");
-    $approved_application_stmt->bind_param("i",$company_id);
-    $approved_application_stmt->execute();
-    $approved_application_result = $approved_application_stmt->get_result();
-    
-    $rejected_application_stmt = $conn->prepare("SELECT * FROM application WHERE application_status = 'rejected' AND Company_id=?");
-    $rejected_application_stmt->bind_param("i",$company_id);
-    $rejected_application_stmt->execute();
-    $rejected_application_result = $rejected_application_stmt->get_result();
-    
-    $waiting_application_stmt = $conn->prepare("SELECT * FROM application WHERE application_status = 'pending' AND Company_id=? ");
-    $waiting_application_stmt->bind_param("i",$company_id);
-    $waiting_application_stmt->execute();
-    $waiting_application_result = $waiting_application_stmt->get_result();
+// Fetch applications
+$query = "
+    SELECT a.application_id, a.application_status, s.First_name, j.jobtitle, s.student_id 
+    FROM application a
+    JOIN student_details s ON a.student_id = s.student_id
+    JOIN job_posting j ON a.job_id = j.job_id
+    WHERE a.Company_id = ? AND a.application_status = ?
+";
+
+$statuses = ['approved', 'pending', 'rejected'];
+$applications = [];
+
+foreach ($statuses as $status) {
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("is", $company_id, $status);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $applications[$status] = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Managing Company</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Application Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <style>
         * {
             padding: 0;
@@ -231,63 +238,63 @@
             color: #6b6464;
         }
         /* Container for each list of companies */
-.application-list {
-    background-color: #1e1e1e;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 10px;
-    border: 1px solid #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.application-list h2 {
-    color: #2f5fff;
-    margin-bottom: 15px;
-}
-
-/* Individual company item styling */
-.application {
-    background-color: #2d2d2d;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.application span {
-    font-size: 1.1em;
-    color: #ffffff;
-}
-
-.application-actions form {
-    display: inline;
-}
-
-.application-actions button {
-    background-color: #2f5fff;
-    border: none;
-    color: #ffffff;
-    padding: 5px 10px;
-    margin-left: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.application-actions button:hover {
-    background-color: #1a3a7f;
-}
-
-/* Specific styling for rejected companies */
-.application-actions span {
-    color: #ff5c5c;
-    font-weight: bold;
-}
-
-
+        .application-list {
+            background-color: #1e1e1e;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .application-list h2 {
+            color: #2f5fff;
+            margin-bottom: 15px;
+        }
+        
+        /* Individual company item styling */
+        .application {
+            background-color: #2d2d2d;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .application span {
+            font-size: 1.1em;
+            color: #ffffff;
+        }
+        
+        .application-actions form {
+            display: inline;
+        }
+        
+        .application-actions button {
+            background-color: #2f5fff;
+            border: none;
+            color: #ffffff;
+            padding: 5px 10px;
+            margin-left: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .application-actions button:hover {
+            background-color: #1a3a7f;
+        }
+        
+        /* Specific styling for rejected companies */
+        .application-actions span {
+            color: #ff5c5c;
+            font-weight: bold;
+        }
+        
+        
         /* Responsive CSS */
         @media (max-width: 1200px) {
             .container {
@@ -337,108 +344,103 @@
 </head>
 <body>
     <div class="sidebar" id="sidebar">
-        <div class="close">
-            <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
-        </div>
-        <div class="bar">
-            <a href="dashboard.php" >Dashboard</a>
-        </div>
-        <div class="bar current">
-            <a href="application.php">Applications</a>
-        </div>
-        <div class="bar">
-            <a href="postedVacancy.php">Job posted</a>
-        </div>
-        <div class="bar">
-            <a href="postVacancy.php">Post vacancy</a>
-        </div>
-        <div class="bar">
-            <a href="#">Profile</a>
-        </div>
+        <div class="close"><i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i></div>
+        <div class="bar"><a href="dashboard.php">Dashboard</a></div>
+        <div class="bar current"><a href="application.php">Applications</a></div>
+        <div class="bar"><a href="postedVacancy.php">Job posted</a></div>
+        <div class="bar"><a href="postVacancy.php">Post vacancy</a></div>
+        <div class="bar"><a href="#">Profile</a></div>
     </div>
 
     <div class="main-container">
         <div class="header">
-            <button class="menu-btn" onclick="toggleSidebar()">
-                <i class="fa-solid fa-bars" id="menu"></i>
-            </button>
+            <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars" id="menu"></i></button>
             <a href="#" class="logo">Campus Recruit</a>
             <div class="profile-container">
-                <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
+                <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i>
                 <div class="profile-menu" id="profileMenu">
-                    <a href="#">Profile</a>
+                    <a href="profile.php">Profile</a>
                     <a href="../logout.php">Logout</a>
                 </div>
             </div>
         </div>
 
-
         <div class="container">
+            <!-- Approved Applications -->
             <div class="application-list">
                 <h2>Approved Applications</h2>
-                <?php while ($application = $approved_application_result->fetch_assoc()): ?>
+                <?php foreach ($applications['approved'] as $application): ?>
                     <div class="application">
-                        <span><?php echo htmlspecialchars($application['application_id']); ?></span>
+                        <span>
+                        <a href="studentDetails.php?student_id=<?= $application['student_id']; ?>&application_id=<?= $application['application_id']; ?>">
+                                <?= htmlspecialchars($application['First_name']); ?>
+                            </a> applied for <?= htmlspecialchars($application['jobtitle']); ?>
+                        </span>
                         <div class="application-actions">
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="application_id" value="<?php echo htmlspecialchars($application['application_id']); ?>">
+                            <form method="POST">
+                                <input type="hidden" name="application_id" value="<?= $application['application_id']; ?>">
                                 <input type="hidden" name="action" value="remove_approval">
                                 <button type="submit">Remove Approval</button>
                             </form>
                         </div>
                     </div>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </div>
 
-            <!-- Waiting Companies -->
+            <!-- Pending Applications -->
             <div class="application-list">
                 <h2>Waiting Applications</h2>
-                <?php while ($application = $waiting_application_result->fetch_assoc()): ?>
+                <?php foreach ($applications['pending'] as $application): ?>
                     <div class="application">
-                        <span><?php echo htmlspecialchars($application['application_id']); ?></span>
+                        <span>
+                            <a href="studentDetails.php?student_id=<?= $application['student_id']; ?>&application_id=<?= $application['application_id']; ?>">
+                                <?= htmlspecialchars($application['First_name']); ?>
+                            </a> applied for <?= htmlspecialchars($application['jobtitle']); ?>
+                        </span>
                         <div class="application-actions">
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="application_id" value="<?php echo htmlspecialchars($application['application_id']); ?>">
+                            <form method="POST">
+                                <input type="hidden" name="application_id" value="<?= $application['application_id']; ?>">
                                 <input type="hidden" name="action" value="approve">
                                 <button type="submit">Approve</button>
                             </form>
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="application_id" value="<?php echo htmlspecialchars($application['application_id']); ?>">
+                            <form method="POST">
+                                <input type="hidden" name="application_id" value="<?= $application['application_id']; ?>">
                                 <input type="hidden" name="action" value="reject">
                                 <button type="submit">Reject</button>
                             </form>
                         </div>
                     </div>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </div>
 
-            <!-- Rejected Companies -->
+            <!-- Rejected Applications -->
             <div class="application-list">
                 <h2>Rejected Applications</h2>
-                <?php while ($application = $rejected_application_result->fetch_assoc()): ?>
+                <?php foreach ($applications['rejected'] as $application): ?>
                     <div class="application">
-                        <span><?php echo htmlspecialchars($application['job_id']); ?></span>
+                        <span>
+                            <a href="studentDetails.php?student_id=<?= $application['student_id']; ?>&application_id=<?= $application['application_id']; ?>">
+                                <?= htmlspecialchars($application['First_name']); ?>
+                            </a> applied for <?= htmlspecialchars($application['jobtitle']); ?>
+                        </span>
                         <div class="application-actions">
                             <span>Rejected</span>
                         </div>
                     </div>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
 
     <script>
         function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('visible');
+            document.getElementById('sidebar').classList.toggle('visible');
         }
         
         function toggleProfileMenu() {
-            const profileMenu = document.getElementById('profileMenu');
-            profileMenu.classList.toggle('active');
+            document.getElementById('profileMenu').classList.toggle('active');
         }
 
-        // Close the profile menu if clicked outside
         window.onclick = function(event) {
             if (!event.target.matches('#profile')) {
                 const dropdowns = document.getElementsByClassName("profile-menu");

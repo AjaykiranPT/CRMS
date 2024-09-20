@@ -1,4 +1,5 @@
 <?php
+ob_start();
 session_start();
 include "connection.php";
 if (!isset($_SESSION['student_id'])) {
@@ -7,7 +8,7 @@ if (!isset($_SESSION['student_id'])) {
     exit(); // Stop further script execution
 }
 
-$company_id=$_SESSION['student_id'];
+$student_id = $_SESSION['student_id'];
 
 // Handle removal of pending applications
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
@@ -281,7 +282,7 @@ $applications_result = $stmt->get_result();
             <div class="profile-container">
                 <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
                 <div class="profile-menu" id="profileMenu">
-                    <a href="#">Profile</a>
+                    <a href="profile.php">Profile</a>
                     <a href="../logout.php">Logout</a>
                 </div>
             </div>

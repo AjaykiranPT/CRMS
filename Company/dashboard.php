@@ -310,7 +310,7 @@ if (!isset($_SESSION['company_id'])) {
     <div class="profile-container">
         <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
         <div class="profile-menu" id="profileMenu">
-            <a href="#">Profile</a>
+            <a href="profile.php">Profile</a>
             <a href="../logout.php">Logout</a>
         </div>
     </div>

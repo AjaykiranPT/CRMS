@@ -1,13 +1,18 @@
 <?php
-    session_start();
-    include "connection.php";
-    if (!isset($_SESSION['company_id'])) {
-        // Redirect to login page if not logged in
-        header("Location: ../login.php");
-        exit(); // Stop further script execution
-    }
-    $company_id=$_SESSION['company_id'];
+session_start();
+ob_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+include "connection.php";
+
+// Check session and redirect
+if (!isset($_SESSION['company_id'])) {
+    header("Location: ../login.php");
+    exit();
+}
+$company_id = $_SESSION['company_id'];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -359,7 +364,7 @@
             <div class="profile-container">
                 <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
                 <div class="profile-menu" id="profileMenu">
-                    <a href="#">Profile</a>
+                    <a href="profile.php">Profile</a>
                     <a href="../logout.php">Logout</a>
                 </div>
             </div>
@@ -452,34 +457,33 @@
         return true; // Allow form submission
     }
     </script>
+    
     <?php
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+       // Retrieve form data
+            $jobtitle = $_POST['jobtitle'];
+            $description = $_POST['description'];
+            $location = $_POST['location'];
+            $deadline = $_POST['deadline'];
+            $course = $_POST['course'];
+            $jobtype = $_POST['jobtype'];
 
+            // Prepare and bind the SQL query
+            $stmt = $conn->prepare("INSERT INTO job_posting (company_id, jobtitle, job_description, job_location, Deadline, course, jobtype) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("issssss", $company_id, $jobtitle, $description, $location, $deadline, $course, $jobtype);
 
-
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-         // Set parameters and execute
-         $jobtitle = $_POST['jobtitle'];
-         $description = $_POST['description'];
-         $location = $_POST['location'];
-         $deadline = $_POST['deadline'];
-         $course = $_POST['course'];
-         $jobtype = $_POST['jobtype'];
-
-         // Prepare and bind
-         $stmt = $conn->prepare("INSERT INTO job_posting ( company_id, jobtitle, job_description, job_location, Deadline,course,jobtype) VALUES (?, ?, ?, ?, ?, ?,?)");
-         $stmt->bind_param("issssss", $company_id, $jobtitle, $description, $location, $deadline, $course,$jobtype);
-
-         if ($stmt->execute()) {
-             echo "<script>alert('Job vacancy has been successfully posted!');</script>";
-
-         } else {
-             echo "<script>alert('Error for posting the job');</script>";
-         }
-     
-         // Close connection
-         $stmt->close();
-         $conn->close();
-         }
+            if ($stmt->execute()) {
+                header("Location: postedVacancy.php");
+                exit();
+            } else {
+                // Print SQL error for debugging
+                echo "Error: " . $stmt->error;
+            }
+        
+            // Close statement and connection
+            $stmt->close();
+            $conn->close();
+        }   
     ?>
 </body>
 </html>
