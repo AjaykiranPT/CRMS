@@ -1,87 +1,32 @@
 <?php
-    include "connection.php";  // Database connection file
+session_start();
+include "connection.php";
+if (!isset($_SESSION['student_id'])) {
+    // Redirect to login page if not logged in
+    header("Location: ../login.php");
+    exit(); // Stop further script execution
+}
 
-    // Fetch the student's details (assuming student ID is 4)
-    if (!isset($_SESSION['student_id'])) {
-        // Redirect to login page if not logged in
-        header("Location: ../login.php");
-        exit(); // Stop further script execution
-    }
-    
-    $company_id=$_SESSION['student_id'];
-    $stmt = $conn->prepare("SELECT course FROM student_details WHERE student_id = ?");
-    $stmt->bind_param("i", $student_id);
+$company_id=$_SESSION['student_id'];
+
+// Handle removal of pending applications
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] === 'delete') {
+    $application_id = $_POST['application_id'];
+    // Only allow deletion of applications with pending status
+    $stmt = $conn->prepare("DELETE FROM application WHERE application_id = ? AND application_status = 'Pending'");
+    $stmt->bind_param("i", $application_id);
     $stmt->execute();
-    $stmt->bind_result($student_course);
-    $stmt->fetch();
     $stmt->close();
+}
 
-    // Handle application actions (apply or remove)
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['job_id']) && isset($_POST['action'])) {
-        $job_id = $_POST['job_id'];
-        $action = $_POST['action'];
-
-        if ($action === 'apply') {
-            // Apply for the job
-            $stmt = $conn->prepare("SELECT company_id FROM job_posting WHERE job_id = ?");
-            $stmt->bind_param("i", $job_id);
-            $stmt->execute();
-            $stmt->bind_result($company_id);
-            $stmt->fetch();
-            $stmt->close();
-
-            // Insert application into the application table
-            $application_date = date('Y-m-d');
-            $stmt = $conn->prepare("INSERT INTO application (student_id, company_id, job_id, application_date) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("iiis", $student_id, $company_id, $job_id, $application_date);
-            if ($stmt->execute()) {
-                echo "<script>alert('Application submitted successfully!');</script>";
-            } else {
-                echo "<script>alert('Failed to submit application. Please try again.');</script>";
-            }
-            $stmt->close();
-        } elseif ($action === 'remove') {
-            // Remove the application
-            $stmt = $conn->prepare("DELETE FROM application WHERE student_id = ? AND job_id = ?");
-            $stmt->bind_param("ii", $student_id, $job_id);
-            if ($stmt->execute()) {
-                echo "<script>alert('Application removed successfully!');</script>";
-            } else {
-                echo "<script>alert('Failed to remove application. Please try again.');</script>";
-            }
-            $stmt->close();
-        }
-    }
-
-    // Fetch job postings that match the student's course
-    $stmt = $conn->prepare("
-    SELECT 
-        jp.job_id, 
-        jp.jobtitle, 
-        jp.job_description, 
-        jp.deadline, 
-        jp.course, 
-        jp.job_location, 
-        jp.jobtype, 
-        c.company_name 
-    FROM job_posting jp
-    JOIN company_details c ON jp.company_id = c.company_id
-    WHERE jp.course = ? AND jp.deadline >= CURDATE()
-");
-    $stmt->bind_param("s", $student_course);
-    $stmt->execute();
-    $jobs_result = $stmt->get_result();
-
-    // Fetch jobs the student has already applied for
-    $stmt = $conn->prepare("SELECT job_id FROM application WHERE student_id = ?");
-    $stmt->bind_param("i", $student_id);
-    $stmt->execute();
-    $applied_jobs_result = $stmt->get_result();
-    $applied_jobs = [];
-    while ($row = $applied_jobs_result->fetch_assoc()) {
-        $applied_jobs[] = $row['job_id'];
-    }
-    $stmt->close();
+// Fetch all applications submitted by the student
+$stmt = $conn->prepare("SELECT a.application_id, a.application_status, j.jobtitle, j.job_description 
+                        FROM application a
+                        JOIN job_posting j ON a.job_id = j.job_id
+                        WHERE a.student_id = ?");
+$stmt->bind_param("i", $student_id);
+$stmt->execute();
+$applications_result = $stmt->get_result();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -149,9 +94,40 @@
             background: #0d0d0d;
             text-align: center;
             display: flex;
-            justify-content:center;
+            flex-direction:column;
+            justify-content:start;
         }
-
+        h2{
+            margin:30px;
+        }
+        .application {
+            background-color: #2d2d2d;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            border: 2px solid transparent;
+        }
+        .application.approved {
+            border-color: green;
+        }
+        .application h3 {
+            color: #2f5fff;
+            margin-bottom: 1rem;
+        }
+        .approved-status {
+            color: green;
+            font-weight: bold;
+        }
+        .delete-btn {
+            background-color: red;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
         .sidebar {
             position: fixed;
             top: 0;
@@ -273,108 +249,23 @@
         }
 
         
-        .job-list {
-            background-color: #2d2d2d;
-            border-radius: 10px;
-            padding: 20px;
-            width: 100%;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        .job-list h2 {
-            color: #2f5fff;
-            margin-bottom: 1rem;
-        }
-        .job {
-            background-color: #3d3d3d;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .job span {
-            color: #fff;
-        }
-        .job-actions {
-        display: flex;
-        gap: 10px;
-        width: 20%;
-        align-items: center;
-    }
-
-    .job-actions form {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        background-color: #454545;
-        padding: 10px;
-        width: 50%;
-        border-radius: 5px;
-    }
-
-    .job-actions input[type="text"],
-    .job-actions textarea {
-        width: 100%;
-        margin-bottom: 10px;
-        padding: 8px;
-        border: 1px solid #555;
-        border-radius: 5px;
-        background-color: #2d2d2d;
-        color: #fff;
-    }
-
-    .job-actions input[type="text"]:focus,
-    .job-actions textarea:focus {
-        border-color: #2f5fff;
-        outline: none;
-    }
-
-    .job-actions button {
-        background-color: #2f5fff;
-        border: none;
-        color: white;
-        padding: 8px 12px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-top: 5px;
-        transition: background-color 0.3s ease;
-    }
-
-    .job-actions button:hover {
-        background-color: #1a3a7f;
-    }
-
-        .post-vacancy-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #2f5fff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            cursor: pointer;
-        }
-        .post-vacancy-btn:hover {
-            background-color: #1a3a7f;
-        }
+        
     </style>
 
 </head>
 <body>
 
-<div class="sidebar" id="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="close">
             <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
         </div>
-        <div class="bar current">
+        <div class="bar ">
             <a href="index.php">Home</a>
         </div>
         <div class="bar">
             <a href="dashboard.php">Dashboard</a>
         </div>
-        <div class="bar">
+        <div class="bar current" >
             <a href="appliedjobs.php">Applied Jobs</a>
         </div>
         <div class="bar">
@@ -397,35 +288,27 @@
     </div>
 
     <div class="container">
-        <div class="job-list">
-            <h2>All Posted Jobs</h2>
-            <?php while ($job = $jobs_result->fetch_assoc()): ?>
-            <div class="job">
-                <h2><?php echo htmlspecialchars($job['jobtitle']); ?></h2>
-                <p><strong>Company:</strong> <?php echo htmlspecialchars($job['company_name']); ?></p>
-                <p><strong>Location:</strong> <?php echo htmlspecialchars($job['job_location']); ?></p>
-                <p><strong>Job Type:</strong> <?php echo htmlspecialchars($job['jobtype']); ?></p>
-                <p><strong>Eligibility:</strong> <?php echo htmlspecialchars($job['course']); ?></p>
-                <p><strong>Deadline:</strong> <?php echo htmlspecialchars($job['deadline']); ?></p>
-                <p><?php echo htmlspecialchars($job['job_description']); ?></p>
-                
-                <div class="job-actions">
-    
-                    <?php if (in_array($job['job_id'], $applied_jobs)): ?>
-        
-                        <button disabled>Applied</button>
+        <h2>Your Applications</h2>
+        <?php while ($application = $applications_result->fetch_assoc()): ?>
+            <div class="application <?php echo $application['application_status'] === 'Approved' ? 'approved' : ''; ?>">
+                <h3><?php echo htmlspecialchars($application['jobtitle']); ?></h3>
+                <p><?php echo htmlspecialchars($application['job_description']); ?></p>
+                <p>Status: 
+                    <?php if ($application['application_status'] === 'approved'): ?>
+                        <span class="approved-status">Approved</span>
                     <?php else: ?>
-        
-                        <form method="POST">
-                            <input type="hidden" name="job_id" value="<?php echo htmlspecialchars($job['job_id']); ?>">
-                            <input type="hidden" name="action" value="apply">
-                            <button type="submit">Apply</button>
-                        </form>
+                        <span><?php echo htmlspecialchars($application['application_status']); ?></span>
                     <?php endif; ?>
-                </div>
+                </p>
+                <?php if ($application['application_status'] === 'pending'): ?>
+                    <form method="POST">
+                        <input type="hidden" name="application_id" value="<?php echo $application['application_id']; ?>">
+                        <input type="hidden" name="action" value="delete">
+                        <button type="submit" class="delete-btn">Remove Application</button>
+                    </form>
+                <?php endif; ?>
             </div>
         <?php endwhile; ?>
-        </div>
     </div>
 
     <script>

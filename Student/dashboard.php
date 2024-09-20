@@ -1,55 +1,57 @@
 <?php
-    session_start();
     include "connection.php";
-    if (!isset($_SESSION['company_id'])) {
+    
+    if (!isset($_SESSION['student_id'])) {
         // Redirect to login page if not logged in
         header("Location: ../login.php");
         exit(); // Stop further script execution
     }
+    
+    $company_id=$_SESSION['student_id'];
 
-    $company_id=$_SESSION['company_id'];
+    // Fetch the student's course
+    $stmt_get_account = $conn->prepare("SELECT Course FROM student_details WHERE student_id = ?");
+    $stmt_get_account->bind_param('i', $student_id);
+    $stmt_get_account->execute();
+    
+    // Bind result to variable
+    $stmt_get_account->bind_result($course);
+    $stmt_get_account->fetch();  // Fetch the result to use in the next queries
+    $stmt_get_account->close();  // Close the statement to avoid sync issues
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $application_id = $_POST['application_id'];
-        $action = $_POST['action'];
-    
-        if ($action === 'approve') {
-            $stmt = $conn->prepare("UPDATE application SET application_status = 'approved' WHERE application_id = ?");
-            $stmt->bind_param("i", $application_id);
-        } elseif ($action === 'reject') {
-            $stmt = $conn->prepare("UPDATE application SET application_status = 'rejected' WHERE application_id = ?");
-            $stmt->bind_param("i", $application_id);
-        } elseif ($action === 'remove_approval') {
-            $stmt = $conn->prepare("UPDATE application SET application_status = 'pending' WHERE application_id = ?");
-            $stmt->bind_param("i", $application_id);
-        }
-    
-        $stmt->execute();
-        $stmt->close();
-    }
-    
-    // Fetch company data
-    $approved_application_stmt = $conn->prepare("SELECT * FROM application WHERE application_status = 'approved' AND Company_id=?");
-    $approved_application_stmt->bind_param("i",$company_id);
-    $approved_application_stmt->execute();
-    $approved_application_result = $approved_application_stmt->get_result();
-    
-    $rejected_application_stmt = $conn->prepare("SELECT * FROM application WHERE application_status = 'rejected' AND Company_id=?");
-    $rejected_application_stmt->bind_param("i",$company_id);
-    $rejected_application_stmt->execute();
-    $rejected_application_result = $rejected_application_stmt->get_result();
-    
-    $waiting_application_stmt = $conn->prepare("SELECT * FROM application WHERE application_status = 'pending' AND Company_id=? ");
-    $waiting_application_stmt->bind_param("i",$company_id);
-    $waiting_application_stmt->execute();
-    $waiting_application_result = $waiting_application_stmt->get_result();
+    // Fetch New Jobs
+    $stmt_new_jobs = $conn->prepare("SELECT COUNT(*) as new_jobs FROM job_posting WHERE course = ?");
+    $stmt_new_jobs->bind_param('s', $course);
+    $stmt_new_jobs->execute();
+    $newJobsResult = $stmt_new_jobs->get_result()->fetch_assoc();
+    $stmt_new_jobs->close();
+
+    // Fetch Today Updated Jobs
+    $stmt_updated_jobs = $conn->prepare("SELECT COUNT(*) as updated_jobs FROM job_posting WHERE DATE(posted_date) = CURDATE()");
+    $stmt_updated_jobs->execute();
+    $updatedJobsResult = $stmt_updated_jobs->get_result()->fetch_assoc();
+    $stmt_updated_jobs->close();
+
+    // Fetch Jobs for You (Example: based on the student's skills)
+    $stmt_jobs_for_you = $conn->prepare("SELECT COUNT(*) as jobs_for_you FROM job_posting WHERE course IN (SELECT Course FROM student_details WHERE student_id = ?)");
+    $stmt_jobs_for_you->bind_param('i', $student_id);
+    $stmt_jobs_for_you->execute();
+    $jobsForYouResult = $stmt_jobs_for_you->get_result()->fetch_assoc();
+    $stmt_jobs_for_you->close();
+
+    // Fetch Applied Jobs
+    $stmt_applied_jobs = $conn->prepare("SELECT COUNT(*) as applied_jobs FROM application WHERE student_id = ?");
+    $stmt_applied_jobs->bind_param('i', $student_id);
+    $stmt_applied_jobs->execute();
+    $appliedJobsResult = $stmt_applied_jobs->get_result()->fetch_assoc();
+    $stmt_applied_jobs->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Managing Company</title>
+    <title>Student Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
@@ -103,7 +105,7 @@
             background: #0d0d0d;
             text-align: center;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             row-gap: 0px;
         }
@@ -146,6 +148,13 @@
             border: 1px solid rgb(47, 95, 255);
             border-radius: 30px;
         }
+        .sidebar .current {
+            padding: 12px;
+            margin-top: 19px;
+            border-radius: 30px;
+            color:white;
+            background-color:rgb(47, 95, 255);
+        }
         .sidebar .bar:hover{
             border: 1px solid white;
             color: white;
@@ -157,13 +166,6 @@
             cursor: pointer;
             transition: color 0.3s ease;
         }
-        .sidebar .current {
-            padding: 12px;
-            margin-top: 19px;
-            border-radius: 30px;
-            color:white;
-            background-color:rgb(47, 95, 255);
-        }
         .sidebar .current a{
             color: white;
             text-decoration: none;
@@ -171,7 +173,43 @@
             cursor: pointer;
             transition: color 0.3s ease;
         }
-        
+
+        .feature {
+            height: 150px;
+            border: 1px solid rgb(47, 95, 255);
+            border-radius: 10px;
+            width: 100%;
+            display: flex;
+            flex-direction: column; /* Stack items vertically */
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            background-color: #1a1a1a;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 10px;
+            cursor: pointer;
+        }
+        .feature:hover {
+            transform: scale(1.02); /* Slight zoom on hover */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.7);
+        }
+        .feature h2 {
+            font-size: 1.2rem;
+            color: #2f5fff;
+            margin-bottom: 10px; /* Space between the heading and the number */
+            font-weight: normal;
+            text-transform: capitalize;
+            text-align: center;
+        }
+
+        .feature p {
+            font-size: 3rem;
+            color: #ffffff;
+            font-weight: bold;
+            margin: 0;
+            line-height: 1.2;
+            text-align: center;
+        }
             
                 /* Profile container to hold the profile icon and dropdown */
         .profile-container {
@@ -230,64 +268,8 @@
             font-size: 1.5em;
             color: #6b6464;
         }
-        /* Container for each list of companies */
-.application-list {
-    background-color: #1e1e1e;
-    border-radius: 10px;
-    padding: 20px;
-    margin: 10px;
-    border: 1px solid #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.application-list h2 {
-    color: #2f5fff;
-    margin-bottom: 15px;
-}
-
-/* Individual company item styling */
-.application {
-    background-color: #2d2d2d;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.application span {
-    font-size: 1.1em;
-    color: #ffffff;
-}
-
-.application-actions form {
-    display: inline;
-}
-
-.application-actions button {
-    background-color: #2f5fff;
-    border: none;
-    color: #ffffff;
-    padding: 5px 10px;
-    margin-left: 5px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.application-actions button:hover {
-    background-color: #1a3a7f;
-}
-
-/* Specific styling for rejected companies */
-.application-actions span {
-    color: #ff5c5c;
-    font-weight: bold;
-}
-
-
+        
+        
         /* Responsive CSS */
         @media (max-width: 1200px) {
             .container {
@@ -333,6 +315,7 @@
                 padding: 2rem 0;
             }
         }
+
     </style>
 </head>
 <body>
@@ -340,20 +323,17 @@
         <div class="close">
             <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
         </div>
-        <div class="bar">
-            <a href="dashboard.php" >Dashboard</a>
+        <div class="bar ">
+            <a href="index.php">Home</a>
         </div>
         <div class="bar current">
-            <a href="application.php">Applications</a>
+            <a href="dashboard.php">Dashboard</a>
         </div>
         <div class="bar">
-            <a href="postedVacancy.php">Job posted</a>
+            <a href="appliedjobs.php">Applied Jobs</a>
         </div>
         <div class="bar">
-            <a href="postVacancy.php">Post vacancy</a>
-        </div>
-        <div class="bar">
-            <a href="#">Profile</a>
+            <a href="profile.php">Profile</a>
         </div>
     </div>
 
@@ -364,65 +344,45 @@
             </button>
             <a href="#" class="logo">Campus Recruit</a>
             <div class="profile-container">
-                <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i> 
+                <i class="fa-solid fa-user" id="profile" onclick="toggleProfileMenu()"></i>
                 <div class="profile-menu" id="profileMenu">
-                    <a href="#">Profile</a>
-                    <a href="#">Logout</a>
+                    <a href="profile.php">Profile</a>
+                    <a href="logout.php">Logout</a>
                 </div>
             </div>
         </div>
 
-
         <div class="container">
-            <div class="application-list">
-                <h2>Approved Applications</h2>
-                <?php while ($application = $approved_application_result->fetch_assoc()): ?>
-                    <div class="application">
-                        <span><?php echo htmlspecialchars($application['application_id']); ?></span>
-                        <div class="application-actions">
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="application_id" value="<?php echo htmlspecialchars($application['application_id']); ?>">
-                                <input type="hidden" name="action" value="remove_approval">
-                                <button type="submit">Remove Approval</button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
+            <!-- New Jobs Feature -->
+            <div class="feature" onclick="window.location.href = 'index.php'">
+                <h2>New Jobs</h2>
+                <p>
+                    <?php echo $newJobsResult['new_jobs']; ?>
+                </p>
+            </div>
+            
+            <!-- Today Updated Jobs Feature -->
+            <div class="feature" onclick="window.location.href = 'index.php'">
+                <h2>Today Updated Jobs</h2>
+                <p>
+                    <?php echo $updatedJobsResult['updated_jobs']; ?>
+                </p>
             </div>
 
-            <!-- Waiting Companies -->
-            <div class="application-list">
-                <h2>Waiting Applications</h2>
-                <?php while ($application = $waiting_application_result->fetch_assoc()): ?>
-                    <div class="application">
-                        <span><?php echo htmlspecialchars($application['application_id']); ?></span>
-                        <div class="application-actions">
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="application_id" value="<?php echo htmlspecialchars($application['application_id']); ?>">
-                                <input type="hidden" name="action" value="approve">
-                                <button type="submit">Approve</button>
-                            </form>
-                            <form method="POST" style="display:inline;">
-                                <input type="hidden" name="application_id" value="<?php echo htmlspecialchars($application['application_id']); ?>">
-                                <input type="hidden" name="action" value="reject">
-                                <button type="submit">Reject</button>
-                            </form>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
+            <!-- Jobs for You Feature -->
+            <div class="feature" onclick="window.location.href = 'index.php'">
+                <h2>Jobs for You</h2>
+                <p>
+                    <?php echo $jobsForYouResult['jobs_for_you']; ?>
+                </p>
             </div>
 
-            <!-- Rejected Companies -->
-            <div class="application-list">
-                <h2>Rejected Applications</h2>
-                <?php while ($application = $rejected_application_result->fetch_assoc()): ?>
-                    <div class="application">
-                        <span><?php echo htmlspecialchars($application['job_id']); ?></span>
-                        <div class="application-actions">
-                            <span>Rejected</span>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
+            <!-- Applied Jobs Feature -->
+            <div class="feature" onclick="window.location.href = 'applied_jobs.php'">
+                <h2>Applied Jobs</h2>
+                <p>
+                    <?php echo $appliedJobsResult['applied_jobs']; ?>
+                </p>
             </div>
         </div>
     </div>
@@ -432,7 +392,7 @@
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('visible');
         }
-        
+
         function toggleProfileMenu() {
             const profileMenu = document.getElementById('profileMenu');
             profileMenu.classList.toggle('active');

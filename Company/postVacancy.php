@@ -1,3 +1,13 @@
+<?php
+    session_start();
+    include "connection.php";
+    if (!isset($_SESSION['company_id'])) {
+        // Redirect to login page if not logged in
+        header("Location: ../login.php");
+        exit(); // Stop further script execution
+    }
+    $company_id=$_SESSION['company_id'];
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -118,7 +128,20 @@
             cursor: pointer;
             transition: color 0.3s ease;
         }
-
+        .sidebar .current {
+            padding: 12px;
+            margin-top: 19px;
+            border-radius: 30px;
+            color:white;
+            background-color:rgb(47, 95, 255);
+        }
+        .sidebar .current a{
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
         .profile-container {
             position: relative;
             display: inline-block;
@@ -209,10 +232,8 @@
             transition: all 0.3s ease;
             letter-spacing: .5px;
         }
-
         .input-layer input[type='text'],
-        .input-layer textarea,
-        .input-layer input[type='date'] {
+        .input-layer textarea{
             height: 30px;
             width: 100%;
             border: none;
@@ -267,40 +288,29 @@
             font-size: 15px;
         }
 
-        .input-layer .dlabel {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            color: #c0c0c0;
-            font-size: 17px;
-            pointer-events: none;
-            font-weight: 100;
-            transition: all 0.3s ease;
-        }
-
-        .input-layer .dinput {
-            width: 100%;
-            height: 40px;
-        }
-
+        
+        
         input[type="date"] {
+            color: rgb(47, 95, 255);
+            border: 1px solid rgb(47, 95, 255);
+            font-weight: 600;
+            cursor: pointer;
             padding: 10px;
             font-size: 16px;
             border: 2px solid #ccc;
-            border-radius: 5px;
+            border-radius: 20px;
             background-color: #000;
             color: #ffffff;
-            width: 100%;
+            width: 70%;
             box-sizing: border-box;
         }
 
         input[type="date"]:focus {
             border-color: #007bff;
             outline: none;
-            background-color: #fff;
+            background-color: grey;
         }
-
+        
         @media (max-width: 768px) {
             .form-container {
                 width: 90%;
@@ -319,24 +329,24 @@
 
 </head>
 <body>
-    <div class="sidebar" id="sidebar">
+<div class="sidebar" id="sidebar">
         <div class="close">
             <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
         </div>
-        <div class="bar">
-            <a href="#" onclick="showDashboard()">Dashboard</a>
+        <div class="bar " >
+            <a href="dashboard.php" >Dashboard</a>
+        </div>
+        <div class="bar ">
+            <a href="application.php">Applications</a>
+        </div>
+        <div class="bar" >
+            <a href="postedVacancy.php">Job posted</a>
+        </div>
+        <div class="bar current">
+            <a href="postVacancy.php">Post vacancy</a>
         </div>
         <div class="bar">
-            <a href="manageCompany.php">Manage Company</a>
-        </div>
-        <div class="bar">
-            <a href="application.php">Manage Applications</a>
-        </div>
-        <div class="bar">
-            <a href="manageUser.php">Manage Users</a>
-        </div>
-        <div class="bar">
-            <a href="#" onclick="showSettings()">Settings</a>
+            <a href="#">Profile</a>
         </div>
     </div>
 
@@ -371,9 +381,9 @@
                     <input type="text" id="location" name="location" placeholder=" " >
                     <label for="location">Location</label>
                 </div>
-                <div class="input-layer">
-                    <input type="date" id="deadline" class="dinput" name="deadline">
+                <div class="input-layer deadline">
                     <label for="deadline" class="dlabel">Deadline</label>
+                    <input type="date" id="deadline" class="dinput" name="deadline">
                 </div>
                 <div class="input-layer">
                     <select name="course" id="course" class="course">
@@ -425,6 +435,51 @@
                 }
             }
         }
+        function company_validateForm() {
+        const jobTitle = document.getElementById('jobtitle').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const location = document.getElementById('location').value.trim();
+        const deadline = document.getElementById('deadline').value;
+        const course = document.getElementById('course').value;
+        const jobType = document.getElementById('jobtype').value;
+
+        // Check if required fields are filled
+        if (!jobTitle || !description || !location || !deadline || !course || !jobType) {
+            alert("Please fill in all fields.");
+            return false; // Prevent form submission
+        }
+        
+        return true; // Allow form submission
+    }
     </script>
+    <?php
+
+
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+         // Set parameters and execute
+         $jobtitle = $_POST['jobtitle'];
+         $description = $_POST['description'];
+         $location = $_POST['location'];
+         $deadline = $_POST['deadline'];
+         $course = $_POST['course'];
+         $jobtype = $_POST['jobtype'];
+
+         // Prepare and bind
+         $stmt = $conn->prepare("INSERT INTO job_posting ( company_id, jobtitle, job_description, job_location, Deadline,course,jobtype) VALUES (?, ?, ?, ?, ?, ?,?)");
+         $stmt->bind_param("issssss", $company_id, $jobtitle, $description, $location, $deadline, $course,$jobtype);
+
+         if ($stmt->execute()) {
+             echo "<script>alert('Job vacancy has been successfully posted!');</script>";
+
+         } else {
+             echo "<script>alert('Error for posting the job');</script>";
+         }
+     
+         // Close connection
+         $stmt->close();
+         $conn->close();
+         }
+    ?>
 </body>
 </html>

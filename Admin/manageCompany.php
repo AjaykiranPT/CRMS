@@ -1,5 +1,11 @@
 <?php
+    session_start();
     include "connection.php";
+    if (!isset($_SESSION['admin_id'])) {
+        // Redirect to login page if not logged in
+        header("Location: ../login.php");
+        exit(); // Stop further script execution
+    }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $company_id = $_POST['company_id'];
@@ -12,7 +18,7 @@
             $stmt = $conn->prepare("UPDATE company_details SET approval = 'rejected' WHERE Company_id = ?");
             $stmt->bind_param("i", $company_id);
         } elseif ($action === 'remove_approval') {
-            $stmt = $conn->prepare("UPDATE company_details SET approval = 'waiting' WHERE Company_id = ?");
+            $stmt = $conn->prepare("UPDATE company_details SET approval = 'pending' WHERE Company_id = ?");
             $stmt->bind_param("i", $company_id);
         }
     
@@ -29,7 +35,7 @@
     $rejected_companies_stmt->execute();
     $rejected_companies_result = $rejected_companies_stmt->get_result();
     
-    $waiting_companies_stmt = $conn->prepare("SELECT * FROM company_details WHERE approval = 'waiting'");
+    $waiting_companies_stmt = $conn->prepare("SELECT * FROM company_details WHERE approval = 'pending'");
     $waiting_companies_stmt->execute();
     $waiting_companies_result = $waiting_companies_stmt->get_result();
 ?>

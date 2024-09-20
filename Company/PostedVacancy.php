@@ -1,6 +1,13 @@
 <?php
+    session_start();
     include "connection.php";
+    if (!isset($_SESSION['company_id'])) {
+        // Redirect to login page if not logged in
+        header("Location: ../login.php");
+        exit(); // Stop further script execution
+    }
 
+    $company_id=$_SESSION['company_id'];
     // Handle POST requests for job management actions (update, delete)
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_POST['action'])) {
@@ -26,7 +33,8 @@
     }
 
     // Fetch all posted jobs
-    $stmt = $conn->prepare("SELECT * FROM job_posting");
+    $stmt = $conn->prepare("SELECT * FROM job_posting where Company_id=?");
+    $stmt->bind_param("i",$company_id);
     $stmt->execute();
     $jobs_result = $stmt->get_result();
 ?>
@@ -145,6 +153,20 @@
 
         .sidebar .bar a {
             color: rgb(47, 95, 255);
+            text-decoration: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        .sidebar .current {
+            padding: 12px;
+            margin-top: 19px;
+            border-radius: 30px;
+            color:white;
+            background-color:rgb(47, 95, 255);
+        }
+        .sidebar .current a{
+            color: white;
             text-decoration: none;
             font-size: 1.2em;
             cursor: pointer;
@@ -296,27 +318,27 @@
 
 </head>
 <body>
+
     <div class="sidebar" id="sidebar">
         <div class="close">
             <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
         </div>
-        <div class="bar">
-            <a href="#" onclick="showDashboard()">Dashboard</a>
+        <div class="bar " >
+            <a href="dashboard.php" >Dashboard</a>
+        </div>
+        <div class="bar ">
+            <a href="application.php">Applications</a>
+        </div>
+        <div class="bar current" >
+            <a href="postedVacancy.php">Job posted</a>
         </div>
         <div class="bar">
-            <a href="manageCompany.php">Manage Company</a>
+            <a href="postVacancy.php">Post vacancy</a>
         </div>
         <div class="bar">
-            <a href="application.php">Manage Applications</a>
-        </div>
-        <div class="bar">
-            <a href="manageUser.php">Manage Users</a>
-        </div>
-        <div class="bar">
-            <a href="#" onclick="showSettings()">Settings</a>
+            <a href="#">Profile</a>
         </div>
     </div>
-
     <div class="main-container">
         <div class="header">
             <button class="menu-btn" onclick="toggleSidebar()">

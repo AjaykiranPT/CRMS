@@ -1,5 +1,11 @@
 <?php
+session_start(); 
 include "connection.php";
+if (!isset($_SESSION['company_id'])) {
+    // Redirect to login page if not logged in
+    header("Location: ../login.php");
+    exit(); // Stop further script execution
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -278,14 +284,17 @@ include "connection.php";
         <div class="close">
             <i class="fa-solid fa-xmark" onclick="toggleSidebar()"></i>
         </div>
-        <div class="bar current">
+        <div class="bar current" >
             <a href="dashboard.php" >Dashboard</a>
         </div>
-        <div class="bar">
-            <a href="manageCompany.php">Manage Company</a>
+        <div class="bar ">
+            <a href="application.php">Applications</a>
         </div>
         <div class="bar">
-            <a href="manageStudent.php">Manage Users</a>
+            <a href="postedVacancy.php">Job posted</a>
+        </div>
+        <div class="bar">
+            <a href="postVacancy.php">Post vacancy</a>
         </div>
         <div class="bar">
             <a href="#">Profile</a>
@@ -344,7 +353,7 @@ include "connection.php";
             <p>
                 <?php
                 $status = 'approved';
-                $stmt = $conn->prepare("SELECT COUNT(*) as approved_applications FROM application WHERE appliaction_status = ?");
+                $stmt = $conn->prepare("SELECT COUNT(*) as approved_applications FROM application WHERE application_status = ?");
                 $stmt->bind_param("s", $status);
                 $stmt->execute();
                 $result = $stmt->get_result();
@@ -360,7 +369,7 @@ include "connection.php";
             <p>
                 <?php
                 $status = 'rejected';
-                $stmt = $conn->prepare("SELECT COUNT(*) as rejected_applications FROM application WHERE appliaction_status = ?");
+                $stmt = $conn->prepare("SELECT COUNT(*) as rejected_applications FROM application WHERE application_status = ?");
                 $stmt->bind_param("s", $status);
                 $stmt->execute();
                 $result = $stmt->get_result();

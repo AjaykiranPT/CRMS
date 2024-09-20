@@ -1,6 +1,11 @@
 <?php
+session_start();
 include "connection.php";
-
+if (!isset($_SESSION['admin_id'])) {
+    // Redirect to login page if not logged in
+    header("Location: ../login.php");
+    exit(); // Stop further script execution
+}
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $student_id = $_POST['student_id'];
     $action = $_POST['action'];
@@ -12,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt = $conn->prepare("UPDATE student_details SET approval = 'rejected' WHERE student_id = ?");
         $stmt->bind_param("i", $student_id);
     } elseif ($action === 'remove_approval') {
-        $stmt = $conn->prepare("UPDATE student_details SET approval = 'waiting' WHERE student_id = ?");
+        $stmt = $conn->prepare("UPDATE student_details SET approval = 'pending' WHERE student_id = ?");
         $stmt->bind_param("i", $student_id);
     }
 
@@ -29,7 +34,7 @@ $rejected_students_stmt = $conn->prepare("SELECT * FROM student_details WHERE ap
 $rejected_students_stmt->execute();
 $rejected_students_result = $rejected_students_stmt->get_result();
 
-$waiting_students_stmt = $conn->prepare("SELECT * FROM student_details WHERE approval = 'waiting'");
+$waiting_students_stmt = $conn->prepare("SELECT * FROM student_details WHERE approval = 'pending'");
 $waiting_students_stmt->execute();
 $waiting_students_result = $waiting_students_stmt->get_result();
 ?>
