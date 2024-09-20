@@ -9,6 +9,7 @@
     }
     
     $company_id=$_SESSION['student_id'];
+    
     $stmt = $conn->prepare("SELECT course FROM student_details WHERE student_id = ?");
     $stmt->bind_param("i", $student_id);
     $stmt->execute();
