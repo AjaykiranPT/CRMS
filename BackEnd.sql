@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 20, 2024 at 05:03 PM
+-- Generation Time: Sep 21, 2024 at 06:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -64,7 +64,7 @@ CREATE TABLE `admin_details` (
 --
 
 INSERT INTO `admin_details` (`id`, `account_email`, `user_name`, `PhoneNum`) VALUES
-(3, 'ajaykiran1221@gmail.com', 'Ajaykiran', '9207363669'),
+(3, 'ajaykiran1221@gmail.com', 'ajaykiran p t', '9207363669'),
 (4, 'abinms@gmail.com', 'Anin M S', '6238474286');
 
 -- --------------------------------------------------------
@@ -87,9 +87,13 @@ CREATE TABLE `application` (
 --
 
 INSERT INTO `application` (`application_id`, `student_id`, `company_id`, `job_id`, `application_date`, `application_status`) VALUES
-(1010, 4, 29, 2, '2024-09-20', 'pending'),
-(1012, 5, 31, 4, '2024-09-20', 'approved'),
-(1013, 5, 30, 3, '2024-09-20', 'pending');
+(1010, 4, 29, 2, '2024-09-20', 'approved'),
+(1012, 5, 31, 4, '2024-09-20', 'pending'),
+(1014, 4, 31, 4, '2024-09-21', 'approved'),
+(1015, 4, 31, 5, '2024-09-21', 'approved'),
+(1016, 4, 31, 6, '2024-09-21', 'approved'),
+(1017, 4, 31, 8, '2024-09-21', 'approved'),
+(1018, 5, 30, 3, '2024-09-21', 'pending');
 
 -- --------------------------------------------------------
 
@@ -144,7 +148,8 @@ INSERT INTO `job_posting` (`job_id`, `company_id`, `jobtitle`, `job_description`
 (4, 31, 'Business Administrator', 'Business Administrator', 'Chennai', '2024-09-20', '2025-04-05', 'Bachelor of Business Administration', 'parttime'),
 (5, 31, 'Game Developer', 'Developing 3D shooting Gaming', 'hydrabad', '2024-09-20', '2025-01-25', 'Bachelor of Computer Applications', 'parttime'),
 (6, 31, '3 D Dev', '3 D model Developer', 'TVM', '2024-09-20', '2026-02-22', 'Bachelor of Computer Applications', 'parttime'),
-(7, 31, 'Accounter', 'Business Accountancy', 'Idukki', '2024-09-20', '2025-02-22', 'Bachelor of Commerce', 'fulltime');
+(7, 31, 'Accounter', 'Business Accountancy', 'Idukki', '2024-09-20', '2025-02-22', 'Bachelor of Commerce', 'fulltime'),
+(8, 31, 'video editing', 'video editing', 'chennai', '2024-09-21', '2024-09-23', 'Bachelor of Computer Applications', 'parttime');
 
 -- --------------------------------------------------------
 
@@ -236,7 +241,7 @@ ALTER TABLE `admin_details`
 -- AUTO_INCREMENT for table `application`
 --
 ALTER TABLE `application`
-  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1014;
+  MODIFY `application_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1019;
 
 --
 -- AUTO_INCREMENT for table `company_details`
@@ -248,7 +253,7 @@ ALTER TABLE `company_details`
 -- AUTO_INCREMENT for table `job_posting`
 --
 ALTER TABLE `job_posting`
-  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `job_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `student_details`
