@@ -6,13 +6,14 @@ if (!isset($_SESSION['company_id'])) {
     header("Location: ../login.php");
     exit(); // Stop further script execution
 }
+$company_id=$_SESSION['company_id'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         * {
@@ -297,7 +298,7 @@ if (!isset($_SESSION['company_id'])) {
             <a href="postVacancy.php">Post vacancy</a>
         </div>
         <div class="bar">
-            <a href="#">Profile</a>
+            <a href="profile.php">Profile</a>
         </div>
     </div>
 
@@ -322,7 +323,8 @@ if (!isset($_SESSION['company_id'])) {
             <h2>Total Applications</h2>
             <p>
                 <?php
-                $stmt = $conn->prepare("SELECT COUNT(*) as total_applications FROM application");
+                $stmt = $conn->prepare("SELECT COUNT(*) as total_applications FROM application WHERE company_id = ?");
+                $stmt->bind_param("i",$company_id);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $row = $result->fetch_assoc();
@@ -337,8 +339,8 @@ if (!isset($_SESSION['company_id'])) {
             <p>
                 <?php
                 $today = date("Y-m-d");
-                $stmt = $conn->prepare("SELECT COUNT(*) as today_applications FROM application WHERE application_date = ?");
-                $stmt->bind_param("s", $today);
+                $stmt = $conn->prepare("SELECT COUNT(*) as today_applications FROM application WHERE application_date = ? AND company_id = ?");
+                $stmt->bind_param("si", $today,$company_id);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $row = $result->fetch_assoc();
@@ -353,8 +355,8 @@ if (!isset($_SESSION['company_id'])) {
             <p>
                 <?php
                 $status = 'approved';
-                $stmt = $conn->prepare("SELECT COUNT(*) as approved_applications FROM application WHERE application_status = ?");
-                $stmt->bind_param("s", $status);
+                $stmt = $conn->prepare("SELECT COUNT(*) as approved_applications FROM application WHERE application_status = ? AND company_id = ?");
+                $stmt->bind_param("si", $status,$company_id);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $row = $result->fetch_assoc();
@@ -369,8 +371,8 @@ if (!isset($_SESSION['company_id'])) {
             <p>
                 <?php
                 $status = 'rejected';
-                $stmt = $conn->prepare("SELECT COUNT(*) as rejected_applications FROM application WHERE application_status = ?");
-                $stmt->bind_param("s", $status);
+                $stmt = $conn->prepare("SELECT COUNT(*) as rejected_applications FROM application WHERE application_status = ? AND company_id = ?");
+                $stmt->bind_param("si", $status,$company_id);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $row = $result->fetch_assoc();

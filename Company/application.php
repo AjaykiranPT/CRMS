@@ -349,7 +349,7 @@ foreach ($statuses as $status) {
         <div class="bar current"><a href="application.php">Applications</a></div>
         <div class="bar"><a href="postedVacancy.php">Job posted</a></div>
         <div class="bar"><a href="postVacancy.php">Post vacancy</a></div>
-        <div class="bar"><a href="#">Profile</a></div>
+        <div class="bar"><a href="profile.php">Profile</a></div>
     </div>
 
     <div class="main-container">

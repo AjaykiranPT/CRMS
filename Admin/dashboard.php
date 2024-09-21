@@ -295,7 +295,7 @@
             <a href="manageStudent.php">Manage Users</a>
         </div>
         <div class="bar">
-            <a href="#">Profile</a>
+            <a href="profile.php">Profile</a>
         </div>
     </div>
 

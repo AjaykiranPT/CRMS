@@ -351,7 +351,7 @@ $company_id = $_SESSION['company_id'];
             <a href="postVacancy.php">Post vacancy</a>
         </div>
         <div class="bar">
-            <a href="#">Profile</a>
+            <a href="profile.php">Profile</a>
         </div>
     </div>
 
