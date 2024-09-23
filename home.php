@@ -267,8 +267,8 @@
             <a href="#" class="logo">Campus Recruit</a>
             <nav>
                 <ul>
-                    <li><a href="login.php">Login</a></li>
-                    <li><a href="registration.php">Register</a></li>
+                    <li><a onclick="window.open('login.php')">Login</a></li>
+                    <li><a onclick="window.open('registration.php')">Register</a></li>
                 </ul>
             </nav>
         </div>
