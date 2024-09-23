@@ -199,7 +199,11 @@
             text-decoration: underline;
             color: black;
         }
+       #studenttable{
+        width:50%;
+       }
        
+    
 
 
     </style>
@@ -229,16 +233,18 @@
     <div class="container">
         <h1>Student Details</h1>
         <div class="details">
-            <p><strong>First Name:</strong> <?= htmlspecialchars($student['First_name']); ?></p>
-            <p><strong>Last Name:</strong> <?= htmlspecialchars($student['Last_name']); ?></p>
-            <p><strong>Gender:</strong> <?= htmlspecialchars($student['Gender']); ?></p>
-            <p><strong>City:</strong> <?= htmlspecialchars($student['City']); ?></p>
-            <p><strong>Course:</strong> <?= htmlspecialchars($student['Course']); ?></p>
-            <p><strong>College:</strong> <?= htmlspecialchars($student['College']); ?></p>
-            <p><strong>Year of Passing:</strong> <?= htmlspecialchars($student['Year_of_passing']); ?></p>
-            <p><strong>Phone Number:</strong> <?= htmlspecialchars($student['PhoneNum']); ?></p>
-            <p><strong>Email:</strong> <?= htmlspecialchars($student['account_email']); ?></p>
-            <p><strong>Application Status:</strong> <?= htmlspecialchars($application['application_status']); ?></p>
+        <table id="studenttable">
+            <tr> <td> <p><strong>First Name:</strong>           </td><td>   <?= htmlspecialchars($student['First_name']); ?></p>            </td></tr>
+            <tr> <td> <p><strong>Last Name:</strong>            </td><td>   <?= htmlspecialchars($student['Last_name']); ?></p>             </td></tr>
+            <tr> <td> <p><strong>Gender:</strong>               </td><td>   <?= htmlspecialchars($student['Gender']); ?></p>                </td></tr>
+            <tr> <td> <p><strong>City:</strong>                 </td><td>   <?= htmlspecialchars($student['City']); ?></p>                  </td></tr>
+            <tr> <td> <p><strong>Course:</strong>               </td><td>   <?= htmlspecialchars($student['Course']); ?></p>                </td></tr>
+            <tr> <td> <p><strong>College:</strong>              </td><td>   <?= htmlspecialchars($student['College']); ?></p>               </td></tr>
+            <tr> <td> <p><strong>Year of Passing:</strong>      </td><td>   <?= htmlspecialchars($student['Year_of_passing']); ?></p>       </td></tr>
+            <tr> <td> <p><strong>Phone Number:</strong>         </td><td>   <?= htmlspecialchars($student['PhoneNum']); ?></p>              </td></tr>
+            <tr> <td> <p><strong>Email:</strong>                </td><td>   <?= htmlspecialchars($student['account_email']); ?></p>         </td></tr>
+            <tr> <td> <p><strong>Application Status:</strong>   </td><td>   <?= htmlspecialchars($application['application_status']); ?></p></td></tr>
+        <table>
         </div>
 
         <!-- Action Buttons -->
