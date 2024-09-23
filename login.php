@@ -1,4 +1,19 @@
-
+<?php
+    include "connection.php";
+    session_start();
+    if (isset($_SESSION['admin_id'])) {
+        header("Location: admin/dashboard.php");
+        exit(); 
+    }
+    else if (isset($_SESSION['company_id'])) {
+        header("Location: company/dashboard.php");
+        exit(); 
+    }
+    else if (isset($_SESSION['student_id'])) {
+        header("Location: Student/index.php");
+        exit(); 
+    }
+?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">

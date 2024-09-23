@@ -199,8 +199,8 @@
             text-decoration: underline;
             color: black;
         }
-       #studenttable{
-        width:50%;
+        #studenttable{
+            width:50%;
        }
        
     
