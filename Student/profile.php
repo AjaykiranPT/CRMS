@@ -28,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $phone_num = $_POST['phone_num'];
     $account_email = $_POST['account_email'];
 
-    $stmt = $conn->prepare("UPDATE student_details SET First_name = ?, Last_name = ?, Gender = ?, City = ?, Course = ?, College = ?, Year_of_passing = ?, PhoneNum = ?, account_email = ? WHERE student_id = ?");
-    $stmt->bind_param("ssssssssi", $first_name, $last_name, $gender, $city, $course, $college, $year_of_passing, $phone_num, $account_email, $student_id);
+    $stmt = $conn->prepare("UPDATE student_details SET First_name = ?, Last_name = ?, Gender = ?, City = ?, Course = ?, College = ?, Year_of_passing = ?, PhoneNum = ?,   account_email = ? WHERE student_id = ?");
+    $stmt->bind_param("sssssssssi", $first_name, $last_name, $gender, $city, $course, $college, $year_of_passing, $phone_num, $account_email, $student_id);
     
     if ($stmt->execute()) {
         echo "<script>alert('Profile updated successfully.');</script>";

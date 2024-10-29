@@ -15,6 +15,10 @@
             if ($action === 'delete') {
                 // Delete a job post
                 $job_id = $_POST['job_id'];
+                $stmt = $conn->prepare("DELETE FROM application WHERE job_id = ?");
+                $stmt->bind_param("i", $job_id);
+                $stmt->execute();
+                $stmt->close();
                 $stmt = $conn->prepare("DELETE FROM job_posting WHERE job_id = ?");
                 $stmt->bind_param("i", $job_id);
                 $stmt->execute();
